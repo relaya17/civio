@@ -25,17 +25,38 @@ Notes:
 - Replace `<URL_ENCODED_PASSWORD>` with your actual password (URL-encode if it contains `@ : / ? #` etc).
 - The `/civio` part is the database name (recommended).
 
-### Deploy server to Render (recommended first step)
+### פריסה (Deployment)
 
-- **Prerequisite**: push this repo to GitHub.
-- In Render: **New → Blueprint**, select the repo. Render will read `render.yaml`.
-- After the service is created, set these **Environment Variables** in the Render dashboard:
-  - **`CORS_ORIGINS`**: put your web origin(s), comma-separated (example: `https://<your-vercel-app>.vercel.app`)
-  - **`MONGODB_URI`** (optional but recommended): your MongoDB Atlas URI
+#### 1. פריסת השרת ב-Render
 
-Notes:
-- Render injects `PORT` automatically.
-- In production, the server will not start without `JWT_SECRET` and `CORS_ORIGINS` (Render generates `JWT_SECRET` from `render.yaml`).
+1. **התחבר ל-Render**: https://dashboard.render.com
+2. **New → Blueprint**: בחר את ה-repository `relaya17/civio`
+3. Render יקרא את `render.yaml` ויצור את השירות אוטומטית
+4. **לאחר יצירת השירות**, הוסף/עדכן את ה-**Environment Variables** ב-Render dashboard:
+   - **`CORS_ORIGINS`**: כתובת ה-Vercel שלך (לדוגמה: `https://civio.vercel.app` או `https://your-app.vercel.app`)
+   - **`MONGODB_URI`** (מומלץ): כתובת ה-MongoDB Atlas שלך
+
+**הערות:**
+- Render יוצר `JWT_SECRET` אוטומטית מ-`render.yaml`
+- Render מזריק `PORT` אוטומטית
+- השרת לא יתחיל ב-production בלי `JWT_SECRET` ו-`CORS_ORIGINS`
+
+#### 2. פריסת האפליקציה ב-Vercel
+
+1. **התחבר ל-Vercel**: https://vercel.com
+2. **Add New Project**: בחר את ה-repository `relaya17/civio`
+3. **הגדרות Build**:
+   - **Framework Preset**: Vite (או Auto-detect)
+   - **Root Directory**: השאר ריק (Vercel יקרא את `vercel.json`)
+   - **Build Command**: `pnpm install --frozen-lockfile && pnpm -C apps/web build` (אוטומטי מ-`vercel.json`)
+   - **Output Directory**: `apps/web/dist` (אוטומטי מ-`vercel.json`)
+4. **Environment Variables**:
+   - **`VITE_API_BASE_URL`**: כתובת ה-Render שלך (לדוגמה: `https://civio-server.onrender.com`)
+5. **Deploy**
+
+**הערות:**
+- Vercel יקרא את `vercel.json` אוטומטית
+- לאחר הפריסה, עדכן את `CORS_ORIGINS` ב-Render עם כתובת ה-Vercel החדשה
 
 ## Using this example
 
