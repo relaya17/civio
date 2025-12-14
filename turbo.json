@@ -1,0 +1,33 @@
+{
+  "$schema": "https://turborepo.com/schema.json",
+  "ui": "tui",
+  "globalEnv": [
+    "PORT",
+    "NODE_ENV",
+    "MONGODB_URI",
+    "JWT_ISSUER",
+    "JWT_AUDIENCE",
+    "JWT_ACCESS_TTL_SECONDS",
+    "JWT_REFRESH_TTL_SECONDS",
+    "JWT_SECRET",
+    "CORS_ORIGINS",
+    "LOG_LEVEL"
+  ],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": ["dist/**"]
+    },
+    "lint": {
+      "dependsOn": ["^lint"]
+    },
+    "check-types": {
+      "dependsOn": ["^check-types"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    }
+  }
+}

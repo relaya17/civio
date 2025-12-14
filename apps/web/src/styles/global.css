@@ -1,0 +1,42 @@
+:root {
+  color-scheme: light;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, Arial, "Noto Sans Hebrew", "Heebo", sans-serif;
+  background: #fafafa;
+  color: #111827;
+}
+
+/* Make focus always visible and high-contrast */
+:focus-visible {
+  outline: 3px solid #1d4ed8;
+  outline-offset: 2px;
+}
+
+/* Print: show only the letter content */
+@media print {
+  .civio-print-only {
+    display: block !important;
+    position: fixed;
+    inset: 0;
+    padding: 24px;
+    background: white;
+    color: black;
+  }
+  body * {
+    visibility: hidden !important;
+  }
+  .civio-print-only,
+  .civio-print-only * {
+    visibility: visible !important;
+  }
+}
+
+

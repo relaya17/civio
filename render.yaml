@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: civio-server
+    runtime: node
+    plan: free
+    rootDir: .
+    buildCommand: pnpm install --frozen-lockfile && pnpm -C apps/server build
+    startCommand: pnpm -C apps/server start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_ISSUER
+        value: civio
+      - key: JWT_AUDIENCE
+        value: civio.clients
+      - key: CORS_ORIGINS
+        value: http://localhost:5173
+      # Optional (recommended): set this to your MongoDB Atlas URI
+      # - key: MONGODB_URI
+      #   sync: false
+

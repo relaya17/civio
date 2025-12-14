@@ -1,0 +1,107 @@
+import type { LetterAuthorityId, LetterKindId } from "@repo/types";
+
+export interface LetterPreset {
+  readonly id: string;
+  readonly label: string;
+  readonly authorityId: LetterAuthorityId;
+  readonly kindId: LetterKindId;
+  readonly subject: string;
+  readonly facts: string;
+  readonly request: string;
+}
+
+const PRESETS: readonly LetterPreset[] = [
+  {
+    id: "comptroller.no-response",
+    label: "מבקר המדינה: אין מענה מהרשות",
+    authorityId: "state-comptroller",
+    kindId: "complaint",
+    subject: "אי קבלת מענה מהרשות",
+    facts:
+      "פניתי לרשות/גוף ציבורי בנושא ___ בתאריך ___.\n" +
+      "למרות פניות חוזרות בתאריך ___ ובתאריך ___, טרם קיבלתי מענה מסודר/מנומק.\n" +
+      "הדבר גורם לי קושי ממשי בהתנהלות ובמיצוי זכויותיי.",
+    request:
+      "אבקש לבדוק את אופן הטיפול בפניותיי ולהכווין כיצד ניתן לקבל מענה מסודר מהרשות.\n" +
+      "אבקש לקבל תשובה בכתב ומנומקת.",
+  },
+  {
+    id: "welfare.help-request",
+    label: "רווחה: בקשה לסיוע/תיאום פגישה",
+    authorityId: "welfare-bureau",
+    kindId: "request-meeting",
+    subject: "בקשה לתיאום פגישה/סיוע",
+    facts:
+      "אני פונה בבקשה לסיוע בתחום ___.\n" +
+      "מצבי כרגע: ___ (כלכלי/רפואי/משפחתי).\n" +
+      "היו לי פניות קודמות (אם יש): ___.",
+    request:
+      "אבקש לתאם פגישה בהקדם האפשרי ולהנחות אותי אילו מסמכים נדרשים.\n" +
+      "אבקש לקבל עדכון בכתב לגבי המשך הטיפול.",
+  },
+  {
+    id: "housing.eligibility-check",
+    label: "משרד השיכון: בדיקת זכאות/סיוע",
+    authorityId: "housing-ministry",
+    kindId: "request-info",
+    subject: "בקשת בירור זכאות/סיוע בתחום הדיור",
+    facts:
+      "אני פונה בבקשה לבירור זכאות לסיוע בתחום הדיור.\n" +
+      "הפרטים הרלוונטיים: ___ (מצב משפחתי/הכנסה/בריאות/דיור נוכחי).\n" +
+      "אם קיים מס׳ פנייה/תיק: ___.",
+    request:
+      "אבקש לבדוק את זכאותי ולהנחות אותי כיצד להגיש/להשלים בקשה במידת הצורך.\n" +
+      "אבקש לקבל תשובה בכתב ומנומקת.",
+  },
+  {
+    id: "btl.appeal.general",
+    label: "ביטוח לאומי: השגה כללית על החלטה",
+    authorityId: "national-insurance",
+    kindId: "appeal-objection",
+    subject: "השגה/בקשה לבחינה מחדש של החלטה",
+    facts:
+      "התקבלה החלטה בענייני בתאריך ___ בנושא ___.\n" +
+      "לטעמי, יש מקום לבחינה מחדש לאור הנסיבות והמידע/מסמכים שברשותי.\n" +
+      "אם קיים מס׳ תיק/פנייה: ___.",
+    request:
+      "אבקש לבחון מחדש את ההחלטה ולפרט את הנימוקים לה.\n" +
+      "אם חסר מסמך/מידע לצורך בחינה חוזרת, אבקש לציין מה בדיוק נדרש.",
+  },
+  {
+    id: "hmo.documents",
+    label: "קופת חולים: בקשה למסמכים/מידע רפואי",
+    authorityId: "health-fund",
+    kindId: "request-documents",
+    subject: "בקשה לקבלת מסמכים/מידע מתיק",
+    facts:
+      "אבקש לקבל מידע/מסמכים מהתיק שלי לצורך התנהלות מסודרת.\n" +
+      "הנושא/תקופה: ___.\n" +
+      "אם קיים מס׳ פנייה/תיק: ___.",
+    request:
+      "אבקש לקבל העתק של המסמכים/הרישומים הרלוונטיים, לרבות סיכומים, הפניות, החלטות והתכתבויות.\n" +
+      "אם יש טופס/הליך לקבלת המסמכים, אבקש להפנות אותי אליו ולהסביר מה צריך למלא.",
+  },
+  {
+    id: "municipality.request-info",
+    label: "עירייה: בקשת מידע/בירור",
+    authorityId: "municipality",
+    kindId: "request-info",
+    subject: "בקשת מידע/בירור",
+    facts:
+      "אני מבקש/ת מידע/בירור לגבי ___.\n" +
+      "פניתי בעבר (אם יש): ___.\n" +
+      "אם קיים מס׳ תיק/פנייה: ___.",
+    request:
+      "אבקש לקבל תשובה בכתב הכוללת את המידע המבוקש והנחיות ברורות להמשך.\n" +
+      "במידת הצורך, אבקש להפנות לגורם המטפל הרלוונטי.",
+  },
+] as const;
+
+export function getLetterPresets(params: {
+  authorityId: LetterAuthorityId;
+  kindId: LetterKindId;
+}): readonly LetterPreset[] {
+  return PRESETS.filter((p) => p.authorityId === params.authorityId && p.kindId === params.kindId);
+}
+
+
