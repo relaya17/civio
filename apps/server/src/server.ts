@@ -48,6 +48,10 @@ export function createServer(): Express {
     }),
   );
 
+  app.get("/", (_req, res) => {
+    res.json({ message: "Civio API is running ✅", version: "1.0.0" });
+  });
+
   app.use("/api/health", healthRouter());
   app.use("/api/auth", authRouter());
   app.use("/api/lawyers", lawyersRouter());
