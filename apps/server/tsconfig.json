@@ -1,21 +1,12 @@
 {
-  "extends": "@repo/typescript-config/base.json",
+  "extends": ["../../tsconfig.base.json", "@repo/typescript-config/base.json"],
   "compilerOptions": {
     "noEmit": true,
     "types": ["node"],
     "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "baseUrl": ".",
-    "paths": {
-      "@repo/types": ["../../packages/types/src"]
-    }
+    "moduleResolution": "NodeNext"
   },
-  "include": ["src"],
-  "references": [
-    {
-      "path": "../../packages/types"
-    }
-  ]
+  "include": ["src"]
 }
 
 

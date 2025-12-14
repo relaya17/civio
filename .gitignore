@@ -26,8 +26,10 @@ coverage
 .next/
 out/
 build
-dist
+dist/
 *.tsbuildinfo
+# Don't ignore dist in packages (needed for workspace resolution)
+!packages/*/dist/
 
 # Expo
 .expo/

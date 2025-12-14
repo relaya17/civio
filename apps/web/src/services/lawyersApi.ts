@@ -1,6 +1,5 @@
-import type { LawyerPublicProfile, RegisterLawyerInput } from "@repo/types";
+import type { LawyerPublicProfile, RegisterLawyerInput, RequestConsultationInput, RequestConsultationResult } from "@repo/types";
 import { apiGetJson, apiPostJson } from "./api";
-import type { RequestConsultationInput, RequestConsultationResult } from "@repo/types";
 
 export async function listLawyers(params?: { specialty?: string; freeOnly?: boolean }) {
   const search = new URLSearchParams();

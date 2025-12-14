@@ -1,12 +1,7 @@
 import type { RequestHandler } from "express";
 import crypto from "node:crypto";
 import { z } from "zod";
-import type {
-  LawyerPublicProfile,
-  RegisterLawyerInput,
-  RequestConsultationInput,
-  RequestConsultationResult,
-} from "@repo/types";
+import type { LawyerPublicProfile, RegisterLawyerInput, RequestConsultationInput, RequestConsultationResult } from "@repo/types";
 import { isMongoConnected } from "../lib/mongo.js";
 import { LawyerModel } from "../models/Lawyer.js";
 import { ConsultationRequestModel } from "../models/ConsultationRequest.js";

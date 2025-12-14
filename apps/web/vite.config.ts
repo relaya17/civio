@@ -10,6 +10,8 @@ export default defineConfig({
     alias: {
       react: path.resolve(__dirname, "node_modules/react"),
       "react-dom": path.resolve(__dirname, "node_modules/react-dom"),
+      "@repo/types": path.resolve(__dirname, "../../packages/types/dist"),
+      "@repo/logic": path.resolve(__dirname, "../../packages/logic/dist"),
     },
   },
   server: {

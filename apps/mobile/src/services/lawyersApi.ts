@@ -1,5 +1,4 @@
-import type { LawyerPublicProfile } from "@repo/types";
-import type { RequestConsultationInput, RequestConsultationResult } from "@repo/types";
+import type { LawyerPublicProfile, RequestConsultationInput, RequestConsultationResult } from "@repo/types";
 import { apiGetJson } from "./api";
 
 export async function listLawyers() {

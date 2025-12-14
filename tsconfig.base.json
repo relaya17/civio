@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@repo/types": ["packages/types/src", "packages/types/dist", "node_modules/@repo/types/dist"],
+      "@repo/logic": ["packages/logic/src", "packages/logic/dist", "node_modules/@repo/logic/dist"]
+    }
+  }
+}
