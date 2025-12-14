@@ -1,0 +1,1 @@
+{"version":3,"file":"shabbat.d.ts","sourceRoot":"","sources":["../src/shabbat.ts"],"names":[],"mappings":"AAEA,MAAM,WAAW,iBAAiB;IAChC,QAAQ,CAAC,SAAS,EAAE,OAAO,CAAC;IAC5B,QAAQ,CAAC,MAAM,EAAE,MAAM,CAAC;IACxB,QAAQ,CAAC,QAAQ,EAAE,gBAAgB,CAAC;CACrC;AAED;;;;;;;GAOG;AACH,wBAAgB,iBAAiB,IAAI,iBAAiB,CAmDrD"}
