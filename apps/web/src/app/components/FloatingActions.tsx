@@ -19,7 +19,7 @@ export function FloatingActions() {
         id: "wizard",
         label: "בדיקת זכות (שאלון)",
         icon: <ChatIcon />,
-        onClick: () => navigate("/w/employee-termination"),
+        onClick: () => navigate("/w"),
       },
       {
         id: "lawyers",

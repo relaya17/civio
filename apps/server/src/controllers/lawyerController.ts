@@ -83,7 +83,7 @@ export const registerLawyer: RequestHandler = async (req, res, next) => {
         consultationFeeNIS: record.consultationFeeNIS,
         offersFreeMonthlySlot: record.offersFreeMonthlySlot,
         verificationStatus: record.verificationStatus,
-        availability: record.availability.map((a) => ({
+        availability: record.availability.map((a: { startISO: string; minutes: number; isFree: boolean }) => ({
           startISO: a.startISO,
           minutes: a.minutes,
           isFree: a.isFree,

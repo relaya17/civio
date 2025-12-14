@@ -31,7 +31,7 @@ export function AppLayout({ children }: PropsWithChildren) {
       { to: "/", label: "בית" },
       { to: "/rights", label: "זכויות" },
       { to: "/letters", label: "מכתבים" },
-      { to: "/w/employee-termination", label: "שאלון" },
+      { to: "/w", label: "שאלון" },
       { to: "/lawyers", label: "עו״ד/יועץ (פיילוט)" },
     ],
     [],

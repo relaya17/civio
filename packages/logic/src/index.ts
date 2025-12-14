@@ -1,4 +1,5 @@
 export * from "./wizards/employeeTerminationWizard.js";
+export * from "./wizards/generalRightsWizard.js";
 export * from "./rights-engine.js";
 export * from "./validators.js";
 export * from "./letters/authorities.js";

@@ -1,0 +1,70 @@
+═══════════════════════════════════════════════════════════════
+  שירות 1: CIVIO SERVER (Backend)
+═══════════════════════════════════════════════════════════════
+
+Root Directory:
+.
+(נשאר ריק או נקודה)
+
+Build Command:
+pnpm install --frozen-lockfile && pnpm -C apps/server build
+
+Start Command:
+pnpm -C apps/server start
+
+Instance Type:
+Free (או Starter $7/חודש)
+
+Health Check Path:
+/api/health
+
+Environment Variables:
+─────────────────────────────────────────────────────────────
+NODE_ENV = production
+
+JWT_SECRET = [לחץ Generate או הזן מפתח של לפחות 32 תווים]
+
+JWT_ISSUER = civio
+
+JWT_AUDIENCE = civio.clients
+
+CORS_ORIGINS = https://civio-web.onrender.com
+[עדכן לאחר יצירת שירות ה-Web]
+
+MONGODB_URI = mongodb+srv://user:password@cluster.mongodb.net/civio?retryWrites=true&w=majority
+[אופציונלי - הזן את כתובת MongoDB Atlas שלך]
+
+
+═══════════════════════════════════════════════════════════════
+  שירות 2: CIVIO WEB (Frontend)
+═══════════════════════════════════════════════════════════════
+
+Root Directory:
+apps/web
+
+Build Command:
+pnpm install --frozen-lockfile && pnpm run build
+
+Start Command:
+[השאר ריק ל-Static Site, או: pnpm run preview]
+
+Instance Type:
+Free
+
+Environment Variables:
+─────────────────────────────────────────────────────────────
+VITE_API_BASE_URL = https://civio-server.onrender.com
+[עדכן לכתובת ה-URL האמיתית של שירות השרת]
+
+
+═══════════════════════════════════════════════════════════════
+  הערות חשובות
+═══════════════════════════════════════════════════════════════
+
+1. צור את שירות השרת קודם
+2. לאחר שהשרת עולה, העתק את ה-URL שלו
+3. צור את שירות ה-Web עם VITE_API_BASE_URL = URL של השרת
+4. חזור לשרת ועדכן CORS_ORIGINS = URL של ה-Web
+5. שני השירותים יתחילו מחדש ויעבדו יחד
+
+═══════════════════════════════════════════════════════════════

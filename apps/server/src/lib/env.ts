@@ -34,5 +34,3 @@ export const env = envSchema.parse({
     "dev-only-secret-change-me-dev-only-secret-change-me",
   CORS_ORIGINS: (requireProd("CORS_ORIGINS", process.env.CORS_ORIGINS), process.env.CORS_ORIGINS),
 });
-
-

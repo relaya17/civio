@@ -61,7 +61,7 @@ export function HomePage() {
           </Typography>
 
           <Stack direction={{ xs: "column", sm: "row" }} spacing={1.25} sx={{ justifyContent: "center", pt: 1 }}>
-            <Button onClick={() => navigate("/w/employee-termination")} aria-label="התחלת שאלון">
+            <Button onClick={() => navigate("/w")} aria-label="התחלת שאלון">
               בדיקת זכויות (שאלון קצר)
             </Button>
             <Button variant="outlined" onClick={() => navigate("/letters")} aria-label="מעבר למחולל מכתבים">

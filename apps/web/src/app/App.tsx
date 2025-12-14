@@ -11,6 +11,11 @@ const WizardEmployeeTerminationPage = lazy(() =>
     default: m.WizardEmployeeTerminationPage,
   })),
 );
+const WizardGeneralPage = lazy(() =>
+  import("../pages/WizardGeneralPage").then((m) => ({
+    default: m.WizardGeneralPage,
+  })),
+);
 const LawyersPage = lazy(() => import("../pages/LawyersPage").then((m) => ({ default: m.LawyersPage })));
 const LawyerProfilePage = lazy(() =>
   import("../pages/LawyerProfilePage").then((m) => ({ default: m.LawyerProfilePage })),
@@ -33,6 +38,7 @@ export function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/rights" element={<RightsPage />} />
             <Route path="/w/employee-termination" element={<WizardEmployeeTerminationPage />} />
+            <Route path="/w" element={<WizardGeneralPage />} />
             <Route path="/lawyers" element={<LawyersPage />} />
             <Route path="/lawyers/:id" element={<LawyerProfilePage />} />
             <Route path="/letters" element={<LettersPage />} />
