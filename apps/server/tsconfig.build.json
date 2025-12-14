@@ -3,27 +3,11 @@
   "compilerOptions": {
     "noEmit": false,
     "outDir": "dist",
-    "rootDir": "src",
     "sourceMap": true,
-    "composite": true,
-    "incremental": true,
     "module": "ESNext",
-    "moduleResolution": "Bundler",
-    "baseUrl": ".",
-    "paths": {
-      "@repo/types": [
-        "../../packages/types/dist",
-        "../../packages/types/src",
-        "node_modules/@repo/types/dist"
-      ]
-    }
+    "moduleResolution": "Node"
   },
-  "include": ["src"],
-  "references": [
-    {
-      "path": "../../packages/types"
-    }
-  ]
+  "include": ["src"]
 }
 
 
