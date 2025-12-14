@@ -10,17 +10,27 @@ export const RIGHTS_AUTHORITIES: readonly RightsAuthority[] = [
   { id: "health-ministry", label: "משרד הבריאות", description: "שירותים, ועדות/נהלים, הכוונה" },
   { id: "transport-ministry", label: "משרד התחבורה", description: "תו חניה לנכה ושירותי תחבורה" },
   { id: "rehabilitation-authority", label: "רשות לשיקום האסיר", description: "תוכניות שיקום והכוונה לאסירים משוחררים" },
+  { id: "education-ministry", label: "משרד החינוך", description: "זכויות חינוך, סיוע לימודים, תמיכות" },
+  { id: "immigration-ministry", label: "משרד העלייה והקליטה", description: "זכויות עולים, קליטה, סיוע" },
+  { id: "disability-commission", label: "נציבות שוויון זכויות לאנשים עם מוגבלות", description: "זכויות נגישות, אפליה, שוויון" },
+  { id: "equal-rights-commission", label: "נציבות שוויון זכויות", description: "זכויות שוויון, מניעת אפליה" },
 ] as const;
 
 export const RIGHTS_CATEGORIES: readonly RightCategory[] = [
-  { id: "labor", label: "עבודה", description: "זכויות בעבודה, שכר, פיטורים ועוד" },
-  { id: "housing", label: "דיור", description: "דיור ציבורי, עמידר, סיוע בשכר דירה" },
-  { id: "welfare", label: "רווחה", description: "שירותים חברתיים, סיוע ותוכניות" },
+  { id: "labor", label: "עבודה והעסקה", description: "זכויות בעבודה, שכר, פיטורים, תנאים סוציאליים" },
+  { id: "housing", label: "דיור", description: "דיור ציבורי, עמידר, סיוע בשכר דירה, זכויות דיירים" },
+  { id: "welfare", label: "רווחה ושירותים חברתיים", description: "שירותים חברתיים, סיוע ותוכניות, לשכות רווחה" },
   { id: "legal-aid", label: "סיוע משפטי", description: "סיוע משפטי מטעם המדינה והכוונה" },
-  { id: "national-insurance", label: "ביטוח לאומי", description: "קצבאות, ועדות, זכאות ועררים" },
-  { id: "health-mobility", label: "בריאות · ניידות · תו נכה", description: "ניידות, תו חניה לנכה, זכויות נגישות" },
+  { id: "national-insurance", label: "ביטוח לאומי", description: "קצבאות, ועדות, זכאות ועררים, אבטלה, נכות" },
+  { id: "health-mobility", label: "בריאות · ניידות · תו נכה", description: "ניידות, תו חניה לנכה, זכויות נגישות, קופות חולים" },
   { id: "rehabilitation", label: "שיקום אסיר משוחרר", description: "שיקום והכוונה לאחר שחרור" },
   { id: "homelessness", label: "דיירי רחוב / חסרי בית", description: "סיוע מיידי, רווחה, דיור ושיקום בקהילה" },
+  { id: "women-rights", label: "זכויות נשים", description: "זכויות נשים, אלימות במשפחה, זכויות אימהות, שוויון מגדרי" },
+  { id: "children-rights", label: "זכויות ילדים", description: "זכויות ילדים, חינוך, רווחה, הגנה" },
+  { id: "elderly-rights", label: "זכויות קשישים", description: "זכויות קשישים, קצבאות, שירותים, דיור מוגן" },
+  { id: "disability-rights", label: "זכויות אנשים עם מוגבלות", description: "זכויות נגישות, שוויון, תמיכות, קצבאות" },
+  { id: "immigration-rights", label: "זכויות עולים וזרים", description: "זכויות עולים, קליטה, עובדים זרים, מעמד" },
+  { id: "education-rights", label: "זכויות חינוך", description: "זכויות חינוך, סיוע לימודים, תמיכות, שילוב" },
 ] as const;
 
 export const RIGHTS_TOPICS: readonly RightsTopic[] = [
@@ -58,6 +68,31 @@ export const RIGHTS_ITEMS: readonly RightItem[] = [
     ],
     lastReviewedISO: "2025-12-13",
     tags: ["פיטורים", "התפטרות"],
+    keywords: ["הודעה מוקדמת", "פיטורים", "התפטרות", "סיום עבודה", "ותק", "חוזה עבודה", "זכויות עובד"],
+    faqs: [
+      {
+        question: "כמה זמן הודעה מוקדמת מגיע לי?",
+        answer: "משך ההודעה המוקדמת תלוי בוותק שלך במקום העבודה. בדרך כלל: עד שנה - יום אחד לכל חודש, שנה עד 5 שנים - שבועיים, מעל 5 שנים - חודש. חשוב לבדוק את החוזה הספציפי שלך.",
+      },
+      {
+        question: "מה קורה אם המעסיק לא נתן לי הודעה מוקדמת?",
+        answer: "אם המעסיק לא נתן הודעה מוקדמת כנדרש, ייתכן שתזכאי לתשלום חלף הודעה מוקדמת. שמרי תיעוד ופני למעסיק בכתב. אם אין מענה, שקלי פנייה לארגון עובדים או ייעוץ משפטי.",
+      },
+    ],
+    commonScenarios: [
+      "פיטורים ללא הודעה מוקדמת",
+      "התפטרות עם הודעה מוקדמת קצרה",
+      "סיום חוזה עבודה קבוע",
+      "פיטורים בעת הריון או חופשת לידה",
+      "פיטורים בגלל גיל",
+    ],
+    eligibilityCriteria: [
+      "עובד/ת שכיר/ה במשכורת",
+      "עובד/ת עם חוזה עבודה",
+      "ותק במקום העבודה",
+    ],
+    relatedRightsIds: ["labor-severance-pay", "labor-payslip"],
+    aiContext: "זכות זו עוסקת בחובת המעסיק או העובד לתת הודעה מוקדמת לפני סיום יחסי העבודה. משך ההודעה משתנה לפי ותק, סוג ההעסקה (קבוע/זמני), ונסיבות מיוחדות. במקרה של פיטורים ללא הודעה מוקדמת, העובד עשוי להיות זכאי לתשלום חלף הודעה מוקדמת. זכות זו קשורה לזכויות נוספות כמו פיצויי פיטורים ותלוש שכר.",
   },
   {
     id: "labor-severance-pay",
