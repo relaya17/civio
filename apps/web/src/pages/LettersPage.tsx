@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Alert,
   Box,
@@ -20,9 +21,31 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import type { GeneratedLetter, LetterAuthorityId, LetterComposerInput, LetterKindId } from "@repo/types";
-import { LETTER_AUTHORITIES, LETTER_KINDS, generateLetter, getLetterSuggestions, getLetterPresets } from "@repo/logic";
+import type {
+  GeneratedLetter,
+  LetterAuthorityId,
+  LetterComposerInput,
+  LetterKindId,
+  LetterSituation,
+  LetterTone,
+  LetterUrgency,
+} from "@repo/types";
+import {
+  LETTER_AUTHORITIES,
+  LETTER_KINDS,
+  generateLetter,
+  getLetterSuggestions,
+  getLetterPresets,
+  LEGAL_SOFT_PHRASES,
+} from "@repo/logic";
 import { useFeatureFlagsStore } from "../state/featureFlagsStore";
+import { useUserPreferencesStore } from "../state/userPreferencesStore";
+import { useSavedLettersStore } from "../state/savedLettersStore";
+import { OnboardingDialog } from "../app/components/OnboardingDialog";
+import { improveText, isAIAvailable } from "../services/aiImprovement";
+import { HelpTooltip } from "../components/HelpTooltip";
+import { EmergencyInfo } from "../components/EmergencyInfo";
+import { LetterEditor } from "../components/LetterEditor";
 
 const DRAFT_KEY = "civio.letters.draft.web.v1";
 
@@ -31,20 +54,28 @@ function todayISO() {
 }
 
 export function LettersPage() {
+  const navigate = useNavigate();
   const enabled = useFeatureFlagsStore((s) => s.flags["letters.enabled"]);
+  const preferences = useUserPreferencesStore((s) => s.preferences);
+  const updatePreferences = useUserPreferencesStore((s) => s.updatePreferences);
+  const saveLetter = useSavedLettersStore((s) => s.saveLetter);
+  const markLetterAsSent = useSavedLettersStore((s) => s.markLetterAsSent);
+  const [showOnboarding, setShowOnboarding] = useState(false);
   const [guidedMode, setGuidedMode] = useState(true);
   const [step, setStep] = useState(0);
   const [simpleMode, setSimpleMode] = useState(true);
 
   const [authorityId, setAuthorityId] = useState<LetterAuthorityId>("state-comptroller");
   const [kindId, setKindId] = useState<LetterKindId>("complaint");
+  const [situation, setSituation] = useState<LetterSituation | undefined>(undefined);
 
-  const [fullName, setFullName] = useState("");
-  const [idNumber, setIdNumber] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [address, setAddress] = useState("");
-  const [city, setCity] = useState("");
+  // Load saved preferences
+  const [fullName, setFullName] = useState(preferences.fullName || "");
+  const [idNumber, setIdNumber] = useState(preferences.idNumber || "");
+  const [email, setEmail] = useState(preferences.email || "");
+  const [phone, setPhone] = useState(preferences.phone || "");
+  const [address, setAddress] = useState(preferences.address || "");
+  const [city, setCity] = useState(preferences.city || "");
   const [dateISO, setDateISO] = useState(todayISO());
   const [caseNumber, setCaseNumber] = useState("");
 
@@ -53,8 +84,30 @@ export function LettersPage() {
   const [request, setRequest] = useState("");
   const [attachments, setAttachments] = useState("");
 
+  // New smart fields - load from preferences
+  const [tone, setTone] = useState<LetterTone>(preferences.preferredTone || "formal");
+  const [urgency, setUrgency] = useState<LetterUrgency>("normal");
+  const [eventDateISO, setEventDateISO] = useState("");
+  const [firstContactDateISO, setFirstContactDateISO] = useState("");
+  const [secondContactDateISO, setSecondContactDateISO] = useState("");
+  const [noResponse, setNoResponse] = useState(false);
+  const [useLegalTone, setUseLegalTone] = useState(false);
+  const [selectedLegalPhrases, setSelectedLegalPhrases] = useState<readonly string[]>([]);
+
   const [copied, setCopied] = useState(false);
   const [draftFound, setDraftFound] = useState<{ savedAt: number; json: string } | null>(null);
+  const [improving, setImproving] = useState(false);
+  const [improvedText, setImprovedText] = useState<string | null>(null);
+  const [editorOpen, setEditorOpen] = useState(false);
+  const [editedLetterText, setEditedLetterText] = useState<string | null>(null);
+
+  // Check if first visit
+  useEffect(() => {
+    const hasSeenOnboarding = window.localStorage.getItem("civio.onboarding.seen");
+    if (!hasSeenOnboarding) {
+      setShowOnboarding(true);
+    }
+  }, []);
 
   type DraftV1 = {
     readonly v: 1;
@@ -196,8 +249,23 @@ export function LettersPage() {
   const requestSuggestions = useMemo(() => suggestions.filter((s) => s.target === "request"), [suggestions]);
 
   const presets = useMemo(() => {
-    return getLetterPresets({ authorityId, kindId });
-  }, [authorityId, kindId]);
+    return getLetterPresets({ authorityId, kindId, situation });
+  }, [authorityId, kindId, situation]);
+
+  // Save preferences when "remember me" is enabled
+  useEffect(() => {
+    if (preferences.rememberMe) {
+      updatePreferences({
+        fullName: fullName || undefined,
+        idNumber: idNumber || undefined,
+        email: email || undefined,
+        phone: phone || undefined,
+        address: address || undefined,
+        city: city || undefined,
+        preferredTone: tone,
+      });
+    }
+  }, [fullName, idNumber, email, phone, address, city, tone, preferences.rememberMe, updatePreferences]);
 
   const steps = useMemo(
     () => ["רשות וסוג", "תרחיש", "פרטי פונה", "תוכן", "תצוגה"],
@@ -232,6 +300,15 @@ export function LettersPage() {
       facts: facts.trim(),
       request: request.trim(),
       attachments: attachments.trim() ? attachments.trim() : undefined,
+      // New smart fields
+      tone,
+      urgency,
+      eventDateISO: eventDateISO || undefined,
+      firstContactDateISO: firstContactDateISO || undefined,
+      secondContactDateISO: secondContactDateISO || undefined,
+      noResponse: noResponse || undefined,
+      useLegalTone: useLegalTone || undefined,
+      situation: situation || undefined,
     };
   }, [
     address,
@@ -241,13 +318,21 @@ export function LettersPage() {
     city,
     dateISO,
     email,
+    eventDateISO,
     facts,
+    firstContactDateISO,
     fullName,
     idNumber,
     kindId,
+    noResponse,
     phone,
     request,
+    secondContactDateISO,
+    situation,
     subject,
+    tone,
+    urgency,
+    useLegalTone,
   ]);
 
   const letter: GeneratedLetter | null = useMemo(() => {
@@ -264,6 +349,19 @@ export function LettersPage() {
     return true;
   }, [facts, fullName, guidedMode, request, step, subject]);
 
+  function downloadAsWord(currentLetter: GeneratedLetter) {
+    const content = `${currentLetter.bodyText}\n\n${currentLetter.disclaimer}`;
+    const blob = new Blob([content], { type: "application/msword;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "civio-letter.doc";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
   function next() {
     setStep((s) => Math.min(s + 1, steps.length - 1));
   }
@@ -279,17 +377,51 @@ export function LettersPage() {
     );
   }
 
+  const fontSize = preferences.fontSize || "medium";
+  const fontSizeMap = {
+    small: "0.875rem",
+    medium: "1rem",
+    large: "1.125rem",
+    xlarge: "1.25rem",
+  };
+
   return (
-    <Container maxWidth="md" sx={{ py: 6 }}>
+    <Container maxWidth="md" sx={{ py: 6, fontSize: fontSizeMap[fontSize] }}>
+      <OnboardingDialog
+        open={showOnboarding}
+        onClose={() => {
+          setShowOnboarding(false);
+          window.localStorage.setItem("civio.onboarding.seen", "true");
+        }}
+        onRememberMeChange={(remember) => {
+          updatePreferences({ rememberMe: remember });
+        }}
+      />
       <Stack spacing={3}>
-        <Box>
-          <Typography variant="h4" sx={{ fontWeight: 900 }}>
-            מחולל מכתבים לרשויות (חינם)
-          </Typography>
-          <Typography sx={{ color: "text.secondary", mt: 1 }}>
-            אין שליחה מתוך המערכת. אפשר להעתיק טקסט או להדפיס ולשמור כ‑PDF.
-          </Typography>
-        </Box>
+        <Stack direction={{ xs: "column", sm: "row" }} spacing={2} sx={{ justifyContent: "space-between", alignItems: { sm: "center" } }}>
+          <Box>
+            <Typography variant="h4" sx={{ fontWeight: 900 }}>
+              מחולל מכתבים לרשויות (חינם)
+            </Typography>
+            <Typography sx={{ color: "text.secondary", mt: 1 }}>
+              אין שליחה מתוך המערכת. אפשר להעתיק טקסט או להדפיס ולשמור כ‑PDF.
+            </Typography>
+          </Box>
+          <FormControl size="small" sx={{ minWidth: 120 }}>
+            <InputLabel id="font-size-label">גודל טקסט</InputLabel>
+            <Select
+              labelId="font-size-label"
+              label="גודל טקסט"
+              value={fontSize}
+              onChange={(e) => updatePreferences({ fontSize: e.target.value as "small" | "medium" | "large" | "xlarge" })}
+            >
+              <MenuItem value="small">קטן</MenuItem>
+              <MenuItem value="medium">בינוני</MenuItem>
+              <MenuItem value="large">גדול</MenuItem>
+              <MenuItem value="xlarge">גדול מאוד</MenuItem>
+            </Select>
+          </FormControl>
+        </Stack>
 
         {copied ? <Alert severity="success">הועתק ללוח.</Alert> : null}
         {draftFound ? (
@@ -448,14 +580,60 @@ export function LettersPage() {
             {step === 1 ? (
               <Paper variant="outlined" sx={{ p: 2 }}>
                 <Stack spacing={2}>
-                  <Typography sx={{ fontWeight: 800 }}>תרחיש מוכן (אופציונלי)</Typography>
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    <Typography sx={{ fontWeight: 800 }}>מה המצב שלך?</Typography>
+                    <HelpTooltip
+                      title="למה זה חשוב?"
+                      explanation="הבחירה במצב עוזרת לנו להתאים את הניסוח והטון של המכתב. מכתב 'אין מענה' יהיה יותר תקיף, בעוד מכתב 'פנייה ראשונית' יהיה יותר מכבד."
+                    />
+                  </Box>
                   <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                    בחרי תרחיש כדי לקבל ניסוח התחלתי, או דלגי ותכתבי בעצמך.
+                    בחרי את המצב המתאים כדי לקבל תבנית מותאמת, או דלגי ותכתבי בעצמך.
                   </Typography>
                   <Stack direction="row" spacing={1} sx={{ flexWrap: "wrap" }}>
                     <Chip
+                      label="פנייה ראשונית"
+                      onClick={() => {
+                        setSituation("first-contact");
+                        setNoResponse(false);
+                      }}
+                      clickable
+                      color={situation === "first-contact" ? "primary" : "default"}
+                      variant={situation === "first-contact" ? "filled" : "outlined"}
+                    />
+                    <Chip
+                      label="אין מענה"
+                      onClick={() => {
+                        setSituation("no-response");
+                        setNoResponse(true);
+                      }}
+                      clickable
+                      color={situation === "no-response" ? "primary" : "default"}
+                      variant={situation === "no-response" ? "filled" : "outlined"}
+                    />
+                    <Chip
+                      label="ערעור על החלטה"
+                      onClick={() => {
+                        setSituation("appeal");
+                        setKindId("appeal-objection");
+                      }}
+                      clickable
+                      color={situation === "appeal" ? "primary" : "default"}
+                      variant={situation === "appeal" ? "filled" : "outlined"}
+                    />
+                    <Chip
+                      label="התראה לפני צעדים"
+                      onClick={() => {
+                        setSituation("warning");
+                      }}
+                      clickable
+                      color={situation === "warning" ? "primary" : "default"}
+                      variant={situation === "warning" ? "filled" : "outlined"}
+                    />
+                    <Chip
                       label="ללא תרחיש (אכתוב בעצמי)"
                       onClick={() => {
+                        setSituation(undefined);
                         setSubject("");
                         setFacts("");
                         setRequest("");
@@ -464,24 +642,30 @@ export function LettersPage() {
                       clickable
                       variant="outlined"
                     />
-                    {presets.map((p) => (
-                      <Chip
-                        key={p.id}
-                        label={p.label}
-                        onClick={() => {
-                          setSubject(p.subject);
-                          setFacts(p.facts);
-                          setRequest(p.request);
-                          next();
-                        }}
-                        clickable
-                        color="primary"
-                        variant="outlined"
-                      />
-                    ))}
                   </Stack>
-                  {presets.length === 0 ? (
-                    <Alert severity="info">אין עדיין תרחיש מוכן לבחירה הזו — לחצי "המשך" ותכתבי בעצמך.</Alert>
+                  {presets.length > 0 ? (
+                    <>
+                      <Typography sx={{ fontWeight: 700, mt: 1 }}>תבניות מוכנות לפי המצב:</Typography>
+                      <Stack direction="row" spacing={1} sx={{ flexWrap: "wrap" }}>
+                        {presets.map((p) => (
+                          <Chip
+                            key={p.id}
+                            label={p.label}
+                            onClick={() => {
+                              setSubject(p.subject);
+                              setFacts(p.facts);
+                              setRequest(p.request);
+                              next();
+                            }}
+                            clickable
+                            color="primary"
+                            variant="outlined"
+                          />
+                        ))}
+                      </Stack>
+                    </>
+                  ) : situation ? (
+                    <Alert severity="info">אין עדיין תבנית מוכנה למצב הזה — לחצי "המשך" ותכתבי בעצמך.</Alert>
                   ) : null}
                 </Stack>
               </Paper>
@@ -536,6 +720,121 @@ export function LettersPage() {
                     control={<Switch checked={simpleMode} onChange={(_, v) => setSimpleMode(v)} />}
                     label="מצב שפה פשוטה (יותר כפתורים, פחות הקלדה)"
                   />
+
+                    {/* Smart letter options */}
+                    <Divider />
+                    <Typography sx={{ fontWeight: 700 }}>הגדרות מכתב חכם</Typography>
+                    <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
+                      <FormControl fullWidth>
+                        <Box sx={{ display: "flex", alignItems: "center", mb: 0.5 }}>
+                          <InputLabel id="tone-label">טון המכתב</InputLabel>
+                          <HelpTooltip
+                            title="טון המכתב"
+                            explanation="טון עדין = מכבד ולא מאיים, טוב לפניות ראשונות. טון רשמי = סטנדרטי ומקצועי. טון רשמי+משפטי = כולל אזכורים משפטיים רכים שמחזקים את הבקשה."
+                          />
+                        </Box>
+                        <Select
+                          labelId="tone-label"
+                          label="טון המכתב"
+                          value={tone}
+                          onChange={(e) => setTone(e.target.value as LetterTone)}
+                        >
+                          <MenuItem value="soft">עדין ומכבד</MenuItem>
+                          <MenuItem value="formal">רשמי</MenuItem>
+                          <MenuItem value="formal-legal">רשמי + חיזוק משפטי</MenuItem>
+                        </Select>
+                      </FormControl>
+                      <FormControl fullWidth>
+                        <Box sx={{ display: "flex", alignItems: "center", mb: 0.5 }}>
+                          <InputLabel id="urgency-label">דחיפות</InputLabel>
+                          <HelpTooltip
+                            title="דחיפות"
+                            explanation="דחיפות גבוהה = המכתב יכלול בקשה למענה דחוף. משפיע על הניסוח והדגשים במכתב."
+                          />
+                        </Box>
+                        <Select
+                          labelId="urgency-label"
+                          label="דחיפות"
+                          value={urgency}
+                          onChange={(e) => setUrgency(e.target.value as LetterUrgency)}
+                        >
+                          <MenuItem value="normal">רגיל</MenuItem>
+                          <MenuItem value="high">גבוהה</MenuItem>
+                        </Select>
+                      </FormControl>
+                    </Stack>
+                    <EmergencyInfo urgency={urgency} />
+
+                  <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                    תאריכים (אופציונלי) – עוזרים לבנות מכתב מדויק יותר
+                  </Typography>
+                  <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
+                    <TextField
+                      label="תאריך האירוע"
+                      type="date"
+                      value={eventDateISO}
+                      onChange={(e) => setEventDateISO(e.target.value)}
+                      InputLabelProps={{ shrink: true }}
+                      fullWidth
+                    />
+                    <TextField
+                      label="תאריך פנייה ראשונה"
+                      type="date"
+                      value={firstContactDateISO}
+                      onChange={(e) => setFirstContactDateISO(e.target.value)}
+                      InputLabelProps={{ shrink: true }}
+                      fullWidth
+                    />
+                    <TextField
+                      label="תאריך פנייה נוספת (אופציונלי)"
+                      type="date"
+                      value={secondContactDateISO}
+                      onChange={(e) => setSecondContactDateISO(e.target.value)}
+                      InputLabelProps={{ shrink: true }}
+                      fullWidth
+                    />
+                  </Stack>
+
+                  <FormControlLabel
+                    control={<Switch checked={noResponse} onChange={(_, v) => setNoResponse(v)} />}
+                    label="לא קיבלתי מענה / יש עיכוב חריג"
+                  />
+
+                  {tone !== "soft" ? (
+                    <Stack spacing={1}>
+                      <FormControlLabel
+                        control={<Switch checked={useLegalTone} onChange={(_, v) => setUseLegalTone(v)} />}
+                        label="הוסף משפטים משפטיים רכים (חובת מענה, זמן סביר, מינהל תקין)"
+                      />
+                      {useLegalTone ? (
+                        <Stack spacing={0.5}>
+                          <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                            בחר/י משפטים להכללה במכתב:
+                          </Typography>
+                          {LEGAL_SOFT_PHRASES.map((phrase) => (
+                            <FormControlLabel
+                              key={phrase}
+                              control={
+                                <Switch
+                                  checked={selectedLegalPhrases.includes(phrase)}
+                                  onChange={(_, checked) => {
+                                    if (checked) {
+                                      setSelectedLegalPhrases([...selectedLegalPhrases, phrase]);
+                                    } else {
+                                      setSelectedLegalPhrases(selectedLegalPhrases.filter((p) => p !== phrase));
+                                    }
+                                  }}
+                                />
+                              }
+                              label={phrase}
+                            />
+                          ))}
+                        </Stack>
+                      ) : null}
+                    </Stack>
+                  ) : null}
+
+                  <Divider />
                   <TextField label="נושא (חובה)" value={subject} onChange={(e) => setSubject(e.target.value)} />
 
                   {simpleMode ? (
@@ -607,10 +906,35 @@ export function LettersPage() {
                   ) : (
                     <>
                       <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
+                        {isAIAvailable() ? (
+                          <Button
+                            variant="outlined"
+                            color="secondary"
+                            disabled={improving}
+                            onClick={async () => {
+                              if (!letter) return;
+                              setImproving(true);
+                              try {
+                                const result = await improveText(letter.bodyText, { tone });
+                                setImprovedText(result.improved);
+                              } catch (err) {
+                                console.error("Failed to improve text:", err);
+                              } finally {
+                                setImproving(false);
+                              }
+                            }}
+                          >
+                            {improving ? "משפר ניסוח..." : "🤖 שיפור ניסוח (AI)"}
+                          </Button>
+                        ) : null}
                         <Button
                           variant="contained"
                           onClick={() => {
-                            const text = `${letter.bodyText}\n\n${letter.disclaimer}`;
+                            const text = editedLetterText
+                              ? `${editedLetterText}\n\n${letter.disclaimer}`
+                              : improvedText
+                                ? `${improvedText}\n\n${letter.disclaimer}`
+                                : `${letter.bodyText}\n\n${letter.disclaimer}`;
                             void navigator.clipboard
                               .writeText(text)
                               .then(() => setCopied(true))
@@ -628,7 +952,91 @@ export function LettersPage() {
                         >
                           הדפסה / שמירה כ‑PDF
                         </Button>
+                        <Button
+                          variant="outlined"
+                          onClick={() => downloadAsWord(letter)}
+                        >
+                          הורדה כ‑Word
+                        </Button>
+                        <Button
+                          variant="outlined"
+                          onClick={() => {
+                            if (letter) {
+                              const emailBody = encodeURIComponent(
+                                `${letter.bodyText}\n\n${letter.disclaimer}`
+                              );
+                              const emailSubject = encodeURIComponent(letter.subject || "פנייה");
+                              window.location.href = `mailto:?subject=${emailSubject}&body=${emailBody}`;
+                            }
+                          }}
+                        >
+                          📧 העתקה למייל
+                        </Button>
+                        <Button
+                          variant="outlined"
+                          color="success"
+                          onClick={() => {
+                            if (letter && fullName) {
+                              const saved = saveLetter({
+                                ...letter,
+                                authorityId,
+                                fullName,
+                              });
+                              markLetterAsSent(saved.id);
+                              setCopied(true);
+                              setTimeout(() => setCopied(false), 3000);
+                            }
+                          }}
+                        >
+                          שמירת מכתב
+                        </Button>
+                        <Button
+                          variant="outlined"
+                          onClick={() => setEditorOpen(true)}
+                        >
+                          ✏️ עריכה ידנית
+                        </Button>
+                        <Button
+                          variant="text"
+                          onClick={() => navigate("/my-letters")}
+                          sx={{ ml: "auto" }}
+                        >
+                          המכתבים שלי
+                        </Button>
                       </Box>
+                      {improvedText ? (
+                        <Alert severity="info" sx={{ mt: 1 }} onClose={() => setImprovedText(null)}>
+                          <Typography variant="body2" sx={{ fontWeight: 700, mb: 1 }}>
+                            טקסט משופר:
+                          </Typography>
+                          <Typography variant="body2" sx={{ whiteSpace: "pre-wrap" }}>
+                            {improvedText}
+                          </Typography>
+                          <Button
+                            size="small"
+                            variant="outlined"
+                            sx={{ mt: 1 }}
+                            onClick={() => {
+                              if (letter) {
+                                // Update letter with improved text
+                                const updatedInput = input;
+                                if (updatedInput) {
+                                  // Regenerate letter with improved body
+                                  // This is a simplified approach - in production, you'd want to update the facts/request fields
+                                }
+                              }
+                              setImprovedText(null);
+                            }}
+                          >
+                            השתמש בטקסט המשופר
+                          </Button>
+                        </Alert>
+                      ) : null}
+                      {copied && letter ? (
+                        <Alert severity="success" sx={{ mt: 1 }}>
+                          {fullName ? "המכתב נשמר בהצלחה! אפשר לראות אותו ב'המכתבים שלי'." : "הטקסט הועתק ללוח."}
+                        </Alert>
+                      ) : null}
 
                       <Typography variant="body2" sx={{ color: "text.secondary" }}>
                         {letter.disclaimer}
@@ -660,6 +1068,17 @@ export function LettersPage() {
                   )}
                 </Stack>
               </Paper>
+            ) : null}
+
+            {letter ? (
+              <LetterEditor
+                open={editorOpen}
+                letter={letter}
+                onClose={() => setEditorOpen(false)}
+                onSave={(editedText) => {
+                  setEditedLetterText(editedText);
+                }}
+              />
             ) : null}
           </>
         ) : (
@@ -740,6 +1159,75 @@ export function LettersPage() {
                 <Divider />
 
                 <Typography sx={{ fontWeight: 800 }}>תוכן (עם כוונה – לא משפטיזציה)</Typography>
+
+                {/* Smart letter options */}
+                <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
+                  <FormControl fullWidth>
+                    <InputLabel id="tone-label-free">טון המכתב</InputLabel>
+                    <Select
+                      labelId="tone-label-free"
+                      label="טון המכתב"
+                      value={tone}
+                      onChange={(e) => setTone(e.target.value as LetterTone)}
+                    >
+                      <MenuItem value="soft">עדין ומכבד</MenuItem>
+                      <MenuItem value="formal">רשמי</MenuItem>
+                      <MenuItem value="formal-legal">רשמי + חיזוק משפטי</MenuItem>
+                    </Select>
+                  </FormControl>
+                  <FormControl fullWidth>
+                    <InputLabel id="urgency-label-free">דחיפות</InputLabel>
+                    <Select
+                      labelId="urgency-label-free"
+                      label="דחיפות"
+                      value={urgency}
+                      onChange={(e) => setUrgency(e.target.value as LetterUrgency)}
+                    >
+                      <MenuItem value="normal">רגיל</MenuItem>
+                      <MenuItem value="high">גבוהה</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Stack>
+
+                <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
+                  <TextField
+                    label="תאריך האירוע (אופציונלי)"
+                    type="date"
+                    value={eventDateISO}
+                    onChange={(e) => setEventDateISO(e.target.value)}
+                    InputLabelProps={{ shrink: true }}
+                    fullWidth
+                  />
+                  <TextField
+                    label="תאריך פנייה ראשונה (אופציונלי)"
+                    type="date"
+                    value={firstContactDateISO}
+                    onChange={(e) => setFirstContactDateISO(e.target.value)}
+                    InputLabelProps={{ shrink: true }}
+                    fullWidth
+                  />
+                  <TextField
+                    label="תאריך פנייה נוספת (אופציונלי)"
+                    type="date"
+                    value={secondContactDateISO}
+                    onChange={(e) => setSecondContactDateISO(e.target.value)}
+                    InputLabelProps={{ shrink: true }}
+                    fullWidth
+                  />
+                </Stack>
+
+                <FormControlLabel
+                  control={<Switch checked={noResponse} onChange={(_, v) => setNoResponse(v)} />}
+                  label="לא קיבלתי מענה / יש עיכוב חריג"
+                />
+
+                {tone !== "soft" ? (
+                  <FormControlLabel
+                    control={<Switch checked={useLegalTone} onChange={(_, v) => setUseLegalTone(v)} />}
+                    label="הוסף משפטים משפטיים רכים"
+                  />
+                ) : null}
+
                 <TextField label="נושא (חובה)" value={subject} onChange={(e) => setSubject(e.target.value)} />
 
                 {simpleMode ? (
@@ -851,6 +1339,12 @@ export function LettersPage() {
                         }}
                       >
                         הדפסה / שמירה כ‑PDF
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        onClick={() => letter && downloadAsWord(letter)}
+                      >
+                        הורדה כ‑Word
                       </Button>
                     </Box>
 

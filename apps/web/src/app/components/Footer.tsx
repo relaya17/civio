@@ -1,4 +1,4 @@
-import { Box, Button, Container, Link, Stack, Typography } from "@mui/material";
+import { Box, Container, Link, Stack, Typography } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 
 export function Footer() {
@@ -23,7 +23,7 @@ export function Footer() {
           <Stack direction="row" spacing={1.25} sx={{ alignItems: "baseline", justifyContent: "center", flexWrap: "wrap" }}>
             <Typography sx={{ fontWeight: 900, letterSpacing: "-0.02em" }}>מגדלור</Typography>
             <Typography variant="body2" sx={{ opacity: 0.9, lineHeight: 1.8, display: { xs: "none", sm: "inline" } }}>
-              מידע כללי בלבד · לא ייעוץ משפטי
+              מידע כללי בלבד · לא ייעוץ משפטי · מומלץ להיוועץ באנשי מקצוע מתאימים
             </Typography>
           </Stack>
 
@@ -41,9 +41,9 @@ export function Footer() {
               מכתבים
             </Link>
             <Typography sx={{ opacity: 0.35, fontSize: 13 }}>•</Typography>
-            <Button variant="text" disabled sx={{ px: 0.5, minWidth: 0, fontWeight: 700, color: "rgba(255,255,255,0.45)" }}>
-              פרטיות (בקרוב)
-            </Button>
+            <Link component={RouterLink} to="/terms" underline="hover" sx={{ fontWeight: 800, fontSize: 13, color: "rgba(255,255,255,0.94)" }}>
+              תנאי שימוש ופרטיות
+            </Link>
             <Typography sx={{ opacity: 0.35, fontSize: 13 }}>•</Typography>
             <Typography variant="caption" sx={{ opacity: 0.82, whiteSpace: "nowrap" }}>
               © {new Date().getFullYear()} · כל הזכויות שמורות ל‑Relaya

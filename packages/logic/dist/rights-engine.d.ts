@@ -1,4 +1,4 @@
-import type { WizardAnswerMap } from "@repo/types/wizard";
+import type { WizardAnswerMap } from "@repo/types";
 export interface PossiblePath {
     readonly id: string;
     readonly title: string;

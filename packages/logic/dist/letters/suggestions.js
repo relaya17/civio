@@ -17,6 +17,18 @@ const COMMON_FACTS = [
         target: "facts",
         text: "פניתי מספר פעמים אך טרם קיבלתי מענה מסודר/מנומק.",
     },
+    {
+        id: "facts.no-response-soft",
+        label: "אין מענה (עדין)",
+        target: "facts",
+        text: "למרות פניות חוזרות, טרם התקבל מענה מסודר.",
+    },
+    {
+        id: "facts.no-response-formal",
+        label: "אין מענה (רשמי)",
+        target: "facts",
+        text: "חרף פניות קודמות, לא נמסרה לי תשובה עניינית.",
+    },
 ];
 const COMMON_REQUESTS = [
     {
@@ -36,6 +48,24 @@ const COMMON_REQUESTS = [
         label: "דחיפות",
         target: "request",
         text: "אבקש טיפול בהקדם האפשרי עקב דחיפות הנושא.",
+    },
+    {
+        id: "req.soft",
+        label: "בקשה עדינה",
+        target: "request",
+        text: "אבקש לקבל מענה בכתב בהקדם האפשרי.",
+    },
+    {
+        id: "req.formal",
+        label: "בקשה רשמית",
+        target: "request",
+        text: "אבקש התייחסות עניינית ומנומקת לפנייתי.",
+    },
+    {
+        id: "req.legal-soft",
+        label: "חיזוק משפטי רך",
+        target: "request",
+        text: "בהסתמך על חובת הרשות לפעול בשקיפות ובהגינות, אבקש לקבל מענה תוך זמן סביר.",
     },
 ];
 const DOCUMENTS_REQUEST = [
@@ -66,6 +96,13 @@ const APPEAL_REQUEST = [
         text: "אבקש לציין את הנימוקים להחלטה והאם חסר מסמך/מידע לצורך בחינה חוזרת.",
     },
 ];
+// Legal soft phrases for checkbox selection
+export const LEGAL_SOFT_PHRASES = [
+    "בהסתמך על חובת הרשות לפעול בשקיפות ובהגינות",
+    "בהסתמך על זכות האזרח לקבל מענה תוך זמן סביר",
+    "בהתאם לכללי המינהל התקין",
+    "בהתאם לעקרונות השוויון והסבירות",
+];
 export function getLetterSuggestions(params) {
     const base = [...COMMON_FACTS, ...COMMON_REQUESTS];
     if (params.kindId === "request-documents")
@@ -81,6 +118,40 @@ export function getLetterSuggestions(params) {
                 label: "בדיקה/בירור",
                 target: "request",
                 text: "אבקש בדיקה/בירור של אופן הטיפול בענייני והכוונה כיצד ניתן לקבל מענה מסודר מהרשות.",
+            },
+        ];
+    }
+    // Add authority-specific suggestions
+    if (params.authorityId === "municipality") {
+        return [
+            ...base,
+            {
+                id: "req.municipality.transparency",
+                label: "שקיפות וסבירות",
+                target: "request",
+                text: "בהסתמך על חובת רשות מקומית לפעול בשקיפות, סבירות ומתן מענה לאזרחים, אבקש את התייחסותכם.",
+            },
+        ];
+    }
+    if (params.authorityId === "national-insurance") {
+        return [
+            ...base,
+            {
+                id: "req.btl.reasonable-time",
+                label: "זמן סביר",
+                target: "request",
+                text: "בהסתמך על זכות המבוטח לקבל החלטה בתוך זמן סביר ובהתאם לכללי המינהל התקין, אבקש מענה.",
+            },
+        ];
+    }
+    if (params.authorityId === "health-fund") {
+        return [
+            ...base,
+            {
+                id: "req.hmo.patient-rights",
+                label: "זכויות מטופל",
+                target: "request",
+                text: "בהסתמך על זכות המטופל לקבל מידע ומענה בזמן סביר, אבקש את התייחסותכם.",
             },
         ];
     }

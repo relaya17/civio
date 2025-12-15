@@ -1,1 +1,1 @@
-{"version":3,"file":"generateLetter.d.ts","sourceRoot":"","sources":["../../src/letters/generateLetter.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,eAAe,EAAE,mBAAmB,EAAE,MAAM,qBAAqB,CAAC;AAYhF,wBAAgB,cAAc,CAAC,KAAK,EAAE,mBAAmB,GAAG,eAAe,CAuD1E"}
+{"version":3,"file":"generateLetter.d.ts","sourceRoot":"","sources":["../../src/letters/generateLetter.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,eAAe,EAAE,mBAAmB,EAAE,MAAM,aAAa,CAAC;AAsBxE,wBAAgB,cAAc,CAAC,KAAK,EAAE,mBAAmB,GAAG,eAAe,CA4G1E"}

@@ -1,10 +1,8 @@
 import { Box, Button, Container, Stack, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 
 export function HomePage() {
   const navigate = useNavigate();
-  const { t } = useTranslation();
 
   return (
     <Box
@@ -38,43 +36,88 @@ export function HomePage() {
           </Box>
 
           <Typography
-            variant="h5"
+            variant="h4"
             sx={{
-              color: "text.secondary",
-              fontWeight: 700,
-              lineHeight: 1.2,
+              color: "text.primary",
+              fontWeight: 800,
+              lineHeight: 1.3,
+              mb: 1,
             }}
           >
-            {t("slogan")}
+            אתם לא לבד – אנחנו כאן כדי לעזור
           </Typography>
 
-          <Typography sx={{ color: "text.primary", lineHeight: 1.8, fontWeight: 600 }}>
-            הכוונה ברורה למיצוי זכויות בישראל מול רשויות וגופים ציבוריים—בשפה פשוטה, בלי להסתבך.
+          <Typography
+            variant="h6"
+            sx={{
+              color: "primary.main",
+              fontWeight: 700,
+              lineHeight: 1.4,
+              mb: 2,
+            }}
+          >
+            מגיע לכם מענה – נעזור לכם לכתוב נכון
           </Typography>
 
-          <Typography sx={{ color: "text.secondary", lineHeight: 1.9 }}>
+          <Box
+            sx={{
+              bgcolor: "background.paper",
+              border: "1px solid",
+              borderColor: "divider",
+              borderRadius: 3,
+              p: 3,
+              mb: 2,
+            }}
+          >
+            <Typography sx={{ color: "text.primary", lineHeight: 1.9, mb: 2, fontWeight: 500 }}>
+              האפליקציה אינה ייעוץ משפטי. היא כלי פשוט לעזור לכם לנסח פנייה מסודרת ומכבדת.
+            </Typography>
+
+            <Typography sx={{ color: "text.secondary", lineHeight: 1.9, mb: 1.5 }}>
+              לא צריך להיות עורך דין כדי לפנות למוסדות. כאן תקבלו מכתב ברור ומובן.
+            </Typography>
+
+            <Typography variant="body2" sx={{ color: "text.secondary", fontStyle: "italic" }}>
+              כל פנייה נשמרת אצלכם. אתם שולטים בכל דבר.
+            </Typography>
+          </Box>
+
+          <Typography sx={{ color: "text.secondary", lineHeight: 1.8, fontSize: "0.95rem" }}>
             בדיקת זכויות בשלבים, מאגר זכויות עם מקורות, ומחולל מכתבים חינמי לגופים כמו משרד השיכון, עמידר, רווחה וביטוח לאומי.
           </Typography>
 
-          <Typography variant="body2" sx={{ color: "text.secondary" }}>
-            מגדלור מספקת מידע כללי בלבד ואינה מהווה ייעוץ משפטי.
-          </Typography>
-
-          <Stack direction={{ xs: "column", sm: "row" }} spacing={1.25} sx={{ justifyContent: "center", pt: 1 }}>
-            <Button onClick={() => navigate("/w")} aria-label="התחלת שאלון">
-              בדיקת זכויות (שאלון קצר)
+          <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} sx={{ justifyContent: "center", pt: 2 }}>
+            <Button
+              size="large"
+              variant="contained"
+              onClick={() => navigate("/letters")}
+              aria-label="התחל לכתוב מכתב"
+              sx={{ minWidth: { xs: "100%", sm: 200 }, py: 1.5 }}
+            >
+              התחל לכתוב מכתב
             </Button>
-            <Button variant="outlined" onClick={() => navigate("/letters")} aria-label="מעבר למחולל מכתבים">
-              מחולל מכתבים (חינם)
+            <Button
+              size="large"
+              variant="outlined"
+              onClick={() => navigate("/w")}
+              aria-label="בדיקת זכויות"
+              sx={{ minWidth: { xs: "100%", sm: 200 }, py: 1.5 }}
+            >
+              בדיקת זכויות (שאלון קצר)
             </Button>
           </Stack>
 
-          <Stack direction="row" spacing={1.25} useFlexGap flexWrap="wrap" sx={{ justifyContent: "center", pt: 0.5 }}>
-            <Button size="small" variant="text" onClick={() => navigate("/rights")} aria-label="מעבר למאגר זכויות">
-              מאגר זכויות
+          <Stack direction="row" spacing={1.5} useFlexGap flexWrap="wrap" sx={{ justifyContent: "center", pt: 1.5 }}>
+            <Button size="medium" variant="text" onClick={() => navigate("/rights")} aria-label="למד עוד על זכויותיך">
+              למד עוד על זכויותיך
             </Button>
-            <Button size="small" variant="text" onClick={() => navigate("/lawyers")} aria-label="מעבר לאנשי מקצוע (פיילוט)">
-              עו״ד/יועץ (פיילוט)
+            <Button
+              size="medium"
+              variant="text"
+              onClick={() => navigate("/lawyers")}
+              aria-label="חיבור לאנשי מקצוע"
+            >
+              חיבור לאנשי מקצוע
             </Button>
           </Stack>
         </Stack>

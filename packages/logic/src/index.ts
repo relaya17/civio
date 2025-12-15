@@ -7,6 +7,7 @@ export * from "./letters/kinds.js";
 export * from "./letters/generateLetter.js";
 export * from "./letters/suggestions.js";
 export * from "./letters/presets.js";
+export { LEGAL_SOFT_PHRASES } from "./letters/suggestions.js";
 export * from "./rights/database.js";
 export * from "./rights/review.js";
 

@@ -1,4 +1,4 @@
-import type { WizardDefinition } from "@repo/types/wizard";
+import type { WizardDefinition } from "@repo/types";
 /**
  * שאלון כללי לזיהוי נושא הזכויות
  * שאלות פשוטות וברורות שמכוונות את המשתמש לנושא הנכון

@@ -1,17 +1,24 @@
 import { useMemo, useState } from "react";
-import { Box, Fab, List, ListItemButton, ListItemText, Paper } from "@mui/material";
+import { Box, Fab, List, ListItemButton, ListItemText, Paper, Badge } from "@mui/material";
 import ChatIcon from "@mui/icons-material/Chat";
 import AccessibilityNewIcon from "@mui/icons-material/AccessibilityNew";
 import DescriptionIcon from "@mui/icons-material/Description";
 import PersonSearchIcon from "@mui/icons-material/PersonSearch";
+import NotificationsIcon from "@mui/icons-material/Notifications";
 import CloseIcon from "@mui/icons-material/Close";
 import { useNavigate } from "react-router-dom";
 import { useFeatureFlagsStore } from "../../state/featureFlagsStore";
+import { useSavedLettersStore } from "../../state/savedLettersStore";
+import { checkReminders } from "../../services/reminders";
+import { RemindersDialog } from "../../components/RemindersDialog";
 
 export function FloatingActions() {
   const [open, setOpen] = useState(false);
+  const [remindersOpen, setRemindersOpen] = useState(false);
   const navigate = useNavigate();
   const lettersEnabled = useFeatureFlagsStore((s) => s.flags["letters.enabled"]);
+  const letters = useSavedLettersStore((s) => s.letters);
+  const reminders = useMemo(() => checkReminders(letters), [letters]);
 
   const items = useMemo(
     () => [
@@ -78,6 +85,19 @@ export function FloatingActions() {
         </Paper>
       ) : null}
 
+      {reminders.length > 0 ? (
+        <Badge badgeContent={reminders.length} color="error">
+          <Fab
+            color="warning"
+            aria-label="תזכורות"
+            onClick={() => setRemindersOpen(true)}
+            sx={{ mb: 1 }}
+          >
+            <NotificationsIcon />
+          </Fab>
+        </Badge>
+      ) : null}
+
       <Fab
         color="primary"
         aria-label={open ? "סגירת תפריט" : "פתיחת תפריט מהיר"}
@@ -85,6 +105,8 @@ export function FloatingActions() {
       >
         {open ? <CloseIcon /> : <ChatIcon />}
       </Fab>
+
+      <RemindersDialog open={remindersOpen} onClose={() => setRemindersOpen(false)} />
     </Box>
   );
 }

@@ -1,4 +1,4 @@
-import type { RightCategory, RightItem, RightsAuthority, RightsTopic } from "@repo/types/rights";
+import type { RightCategory, RightItem, RightsAuthority, RightsTopic } from "@repo/types";
 export declare const RIGHTS_AUTHORITIES: readonly RightsAuthority[];
 export declare const RIGHTS_CATEGORIES: readonly RightCategory[];
 export declare const RIGHTS_TOPICS: readonly RightsTopic[];

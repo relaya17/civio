@@ -1,0 +1,30 @@
+{
+  "appName": "מגדלור",
+  "slogan": "מילים שעוזרות לקבל מענה",
+  "nav": {
+    "home": "בית",
+    "rights": "זכויות",
+    "letters": "מכתבים",
+    "myLetters": "המכתבים שלי",
+    "statistics": "סטטיסטיקה",
+    "wizard": "שאלון",
+    "lawyers": "עו״ד/יועץ (פיילוט)"
+  },
+  "common": {
+    "save": "שמירה",
+    "cancel": "ביטול",
+    "continue": "המשך",
+    "back": "חזרה",
+    "copy": "העתקה",
+    "delete": "מחיקה",
+    "edit": "עריכה",
+    "view": "צפייה"
+  },
+  "letters": {
+    "title": "מחולל מכתבים לרשויות (חינם)",
+    "subtitle": "אין שליחה מתוך המערכת. אפשר להעתיק טקסט או להדפיס ולשמור כ‑PDF.",
+    "aiImprove": "🤖 שיפור ניסוח (AI)",
+    "improving": "משפר ניסוח...",
+    "copyToEmail": "העתקה למייל"
+  }
+}

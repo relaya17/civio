@@ -16,10 +16,12 @@ import MenuIcon from "@mui/icons-material/Menu";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import TranslateIcon from "@mui/icons-material/Translate";
 import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import { Footer } from "./Footer";
 
 export function AppLayout({ children }: PropsWithChildren) {
+  const { t, i18n } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
   const [langAnchor, setLangAnchor] = useState<HTMLElement | null>(null);
@@ -28,14 +30,21 @@ export function AppLayout({ children }: PropsWithChildren) {
 
   const nav = useMemo(
     () => [
-      { to: "/", label: "בית" },
-      { to: "/rights", label: "זכויות" },
-      { to: "/letters", label: "מכתבים" },
-      { to: "/w", label: "שאלון" },
-      { to: "/lawyers", label: "עו״ד/יועץ (פיילוט)" },
+      { to: "/", label: t("nav.home") },
+      { to: "/rights", label: t("nav.rights") },
+      { to: "/letters", label: t("nav.letters") },
+      { to: "/my-letters", label: t("nav.myLetters") },
+      { to: "/statistics", label: t("nav.statistics") },
+      { to: "/w", label: t("nav.wizard") },
+      { to: "/lawyers", label: t("nav.lawyers") },
     ],
-    [],
+    [t],
   );
+
+  const handleLanguageChange = (lang: string) => {
+    void i18n.changeLanguage(lang);
+    setLangAnchor(null);
+  };
 
   return (
     <Box sx={{ minHeight: "100dvh", display: "grid", gridTemplateRows: "auto 1fr auto" }}>
@@ -173,7 +182,7 @@ export function AppLayout({ children }: PropsWithChildren) {
                 מגדלור
               </Typography>
               <Typography sx={{ opacity: 0.9, fontSize: 13, display: { xs: "none", sm: "inline" } }}>
-                אור ומדריך בדרך לזכויות
+                מילים שעוזרות לקבל מענה
               </Typography>
             </Box>
 
@@ -214,10 +223,19 @@ export function AppLayout({ children }: PropsWithChildren) {
                 }}
               >
                 עברית (ברירת מחדל)
+              </MenuItem            >
+              <MenuItem onClick={() => handleLanguageChange("he")} selected={i18n.language === "he"}>
+                עברית
               </MenuItem>
-              <MenuItem disabled>English (בקרוב)</MenuItem>
-              <MenuItem disabled>العربية (בקרוב)</MenuItem>
-              <MenuItem disabled>Русский (בקרוב)</MenuItem>
+              <MenuItem onClick={() => handleLanguageChange("ar")} selected={i18n.language === "ar"}>
+                العربية
+              </MenuItem>
+              <MenuItem onClick={() => handleLanguageChange("en")} selected={i18n.language === "en"}>
+                English
+              </MenuItem>
+              <MenuItem onClick={() => handleLanguageChange("ru")} selected={i18n.language === "ru"}>
+                Русский
+              </MenuItem>
             </Menu>
           </Container>
         </Toolbar>

@@ -71,7 +71,114 @@ const PRESETS = [
         request: "אבקש לקבל תשובה בכתב הכוללת את המידע המבוקש והנחיות ברורות להמשך.\n" +
             "במידת הצורך, אבקש להפנות לגורם המטפל הרלוונטי.",
     },
+    // New smart templates based on user requirements
+    {
+        id: "municipality.first-contact",
+        label: "עירייה: פנייה ראשונית",
+        authorityId: "municipality",
+        kindId: "request-info",
+        subject: "בקשה לבירור / טיפול בנושא ___",
+        situation: "first-contact",
+        facts: "אני פונה אליכם בנוגע ל___, אשר התרחש בתאריך ___.\n" +
+            "זהו המגע הראשון שלי בנושא זה.",
+        request: "אבקש את התייחסותכם והנחיות ברורות כיצד לפעול בהמשך.\n" +
+            "אשמח לקבל מענה בכתב בהקדם האפשרי.",
+    },
+    {
+        id: "municipality.no-response",
+        label: "עירייה: אין מענה / בקשה למענה",
+        authorityId: "municipality",
+        kindId: "complaint",
+        subject: "בקשה למענה / בירור / טיפול בנושא ___",
+        situation: "no-response",
+        facts: "אני פונה אליכם בנוגע ל___, אשר התרחש בתאריך ___.\n" +
+            "בתאריך ___ פניתי אליכם לראשונה בנושא, ובתאריך ___ פניתי פעם נוספת.\n" +
+            "למרות פניות אלו, טרם התקבל מענה מסודר או מנומק.",
+        request: "בהסתמך על חובת רשות מקומית לפעול בשקיפות, סבירות ומתן מענה לאזרחים, היעדר ההתייחסות גורם לי קושי ממשי בהתנהלות ופוגע ביכולתי למצות את זכויותיי.\n" +
+            "אבקש את התייחסותכם בכתב בהקדם האפשרי.",
+    },
+    {
+        id: "municipality.warning",
+        label: "עירייה: התראה לפני נקיטת צעדים",
+        authorityId: "municipality",
+        kindId: "complaint",
+        subject: "התראה לפני נקיטת צעדים",
+        situation: "warning",
+        facts: "פניתי אליכם מספר פעמים בנושא ___ (תאריכים: ___, ___, ___).\n" +
+            "למרות פניות חוזרות, טרם התקבל מענה או טיפול בנושא.\n" +
+            "הדבר גורם לי נזק ממשי ופוגע בזכויותיי.",
+        request: "אבקש לקבל מענה וטיפול בהקדם האפשרי, לפני שאאלץ לפנות לגורמים נוספים.\n" +
+            "אשמח לפתרון הוגן ומסודר של העניין.",
+    },
+    {
+        id: "btl.first-contact",
+        label: "ביטוח לאומי: פנייה ראשונית",
+        authorityId: "national-insurance",
+        kindId: "request-info",
+        subject: "בקשה לבירור / הגשת תביעה בנושא ___",
+        situation: "first-contact",
+        facts: "אני פונה אליכם בבקשה לבירור/הגשת תביעה בנושא ___.\n" +
+            "זהו המגע הראשון שלי בנושא זה.",
+        request: "אבקש הנחיות ברורות כיצד להגיש את הבקשה/התביעה ומה המסמכים הנדרשים.\n" +
+            "אשמח לקבל מענה והנחיות בהקדם האפשרי.",
+    },
+    {
+        id: "btl.no-response",
+        label: "ביטוח לאומי: אין מענה / בקשה למענה",
+        authorityId: "national-insurance",
+        kindId: "complaint",
+        subject: "בקשה למענה בנוגע לתביעה / פנייה מס' ___",
+        situation: "no-response",
+        facts: "בתאריך ___ הגשתי תביעה / פנייה בנושא ___.\n" +
+            "בתאריך ___ פניתי שוב לקבלת עדכון.\n" +
+            "חרף זאת, לא קיבלתי מענה מסודר או החלטה מנומקת.",
+        request: "בהסתמך על זכות המבוטח לקבל החלטה בתוך זמן סביר ובהתאם לכללי המינהל התקין, היעדר המענה מקשה עליי ופוגע בזכויותיי הסוציאליות.\n" +
+            "אבקש לקבל התייחסות ברורה ומנומקת בהקדם.",
+    },
+    {
+        id: "btl.appeal",
+        label: "ביטוח לאומי: ערעור על החלטה",
+        authorityId: "national-insurance",
+        kindId: "appeal-objection",
+        subject: "ערעור על החלטה",
+        situation: "appeal",
+        facts: "התקבלה החלטה בענייני בתאריך ___ בנושא ___.\n" +
+            "לטעמי, יש מקום לבחינה מחדש לאור הנסיבות והמידע/מסמכים שברשותי.\n" +
+            "אם קיים מס׳ תיק/פנייה: ___.",
+        request: "אבקש לבחון מחדש את ההחלטה ולפרט את הנימוקים לה.\n" +
+            "אם חסר מסמך/מידע לצורך בחינה חוזרת, אבקש לציין מה בדיוק נדרש.",
+    },
+    {
+        id: "hmo.no-response",
+        label: "קופת חולים: אין מענה / בקשה לבירור",
+        authorityId: "health-fund",
+        kindId: "request-info",
+        subject: "בקשה לבירור / מענה בנושא רפואי / אדמיניסטרטיבי",
+        facts: "אני פונה אליכם בנוגע ל___, אשר פניתי בעניינו בתאריך ___.\n" +
+            "למרות פניות נוספות בתאריך ___, טרם קיבלתי מענה מספק.",
+        request: "בהסתמך על זכות המטופל לקבל מידע ומענה בזמן סביר, היעדר ההתייחסות פוגע ביכולתי לקבל טיפול מתאים.\n" +
+            "אבקש את התייחסותכם בהקדם האפשרי.",
+    },
+    {
+        id: "ministry.no-response",
+        label: "משרד ממשלתי: אין מענה / בקשה למענה",
+        authorityId: "general",
+        kindId: "complaint",
+        subject: "בקשה למענה לפנייה מתאריך ___",
+        facts: "בתאריך ___ פניתי אליכם בנושא ___.\n" +
+            "חרף פניות חוזרות, טרם נמסר לי מענה ענייני.",
+        request: "בהתאם לעקרונות השירות הציבורי וחובת מתן מענה לפניות אזרחים, אבקש לקבל התייחסות מסודרת ומנומקת.\n" +
+            "היעדר מענה גורם לי קושי ממשי בהתנהלות מול המערכת.",
+    },
 ];
 export function getLetterPresets(params) {
-    return PRESETS.filter((p) => p.authorityId === params.authorityId && p.kindId === params.kindId);
+    let filtered = PRESETS.filter((p) => p.authorityId === params.authorityId && p.kindId === params.kindId);
+    // If situation is specified, prioritize presets matching that situation
+    if (params.situation) {
+        const situationPresets = filtered.filter((p) => p.situation === params.situation);
+        if (situationPresets.length > 0) {
+            return situationPresets;
+        }
+    }
+    return filtered;
 }

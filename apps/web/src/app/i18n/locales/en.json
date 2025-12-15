@@ -1,0 +1,30 @@
+{
+  "appName": "Lighthouse",
+  "slogan": "Words that help get a response",
+  "nav": {
+    "home": "Home",
+    "rights": "Rights",
+    "letters": "Letters",
+    "myLetters": "My Letters",
+    "statistics": "Statistics",
+    "wizard": "Wizard",
+    "lawyers": "Lawyers/Advisors (Pilot)"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "continue": "Continue",
+    "back": "Back",
+    "copy": "Copy",
+    "delete": "Delete",
+    "edit": "Edit",
+    "view": "View"
+  },
+  "letters": {
+    "title": "Letter Generator for Authorities (Free)",
+    "subtitle": "No sending from the system. You can copy text or print and save as PDF.",
+    "aiImprove": "🤖 Improve Wording (AI)",
+    "improving": "Improving wording...",
+    "copyToEmail": "Copy to Email"
+  }
+}

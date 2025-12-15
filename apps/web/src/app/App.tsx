@@ -21,7 +21,10 @@ const LawyerProfilePage = lazy(() =>
   import("../pages/LawyerProfilePage").then((m) => ({ default: m.LawyerProfilePage })),
 );
 const LettersPage = lazy(() => import("../pages/LettersPage").then((m) => ({ default: m.LettersPage })));
+const MyLettersPage = lazy(() => import("../pages/MyLettersPage").then((m) => ({ default: m.MyLettersPage })));
+const StatisticsPage = lazy(() => import("../pages/StatisticsPage").then((m) => ({ default: m.StatisticsPage })));
 const RightsPage = lazy(() => import("../pages/RightsPage").then((m) => ({ default: m.RightsPage })));
+const TermsPage = lazy(() => import("../pages/TermsPage").then((m) => ({ default: m.TermsPage })));
 
 export function App() {
   return (
@@ -42,6 +45,9 @@ export function App() {
             <Route path="/lawyers" element={<LawyersPage />} />
             <Route path="/lawyers/:id" element={<LawyerProfilePage />} />
             <Route path="/letters" element={<LettersPage />} />
+            <Route path="/my-letters" element={<MyLettersPage />} />
+            <Route path="/statistics" element={<StatisticsPage />} />
+            <Route path="/terms" element={<TermsPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
           <FloatingActions />
