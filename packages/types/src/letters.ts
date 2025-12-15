@@ -63,6 +63,7 @@ export interface LetterComposerInput {
   readonly secondContactDateISO?: string; // Date of second contact (optional)
   readonly noResponse?: boolean; // Whether no response was received
   readonly useLegalTone?: boolean; // Whether to use soft legal phrases
+  readonly selectedLegalPhrases?: readonly string[]; // User-selected legal phrases from checkboxes
   readonly situation?: LetterSituation; // Situation for smart template selection
 }
 

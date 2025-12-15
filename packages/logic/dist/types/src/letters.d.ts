@@ -36,6 +36,7 @@ export interface LetterComposerInput {
     readonly secondContactDateISO?: string;
     readonly noResponse?: boolean;
     readonly useLegalTone?: boolean;
+    readonly selectedLegalPhrases?: readonly string[];
     readonly situation?: LetterSituation;
 }
 export interface GeneratedLetter {

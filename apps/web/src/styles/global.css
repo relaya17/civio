@@ -22,20 +22,41 @@ body {
 
 /* Print: show only the letter content */
 @media print {
+  @page {
+    size: A4;
+    margin: 2cm;
+  }
+  
   .civio-print-only {
     display: block !important;
     position: fixed;
     inset: 0;
-    padding: 24px;
+    padding: 2cm;
     background: white;
     color: black;
+    font-size: 12pt;
+    line-height: 1.6;
   }
+  
   body * {
     visibility: hidden !important;
   }
+  
   .civio-print-only,
   .civio-print-only * {
     visibility: visible !important;
+  }
+  
+  /* Hide all UI elements when printing */
+  button,
+  .MuiButton-root,
+  .MuiAppBar-root,
+  .MuiFab-root,
+  nav,
+  header,
+  footer {
+    display: none !important;
+    visibility: hidden !important;
   }
 }
 

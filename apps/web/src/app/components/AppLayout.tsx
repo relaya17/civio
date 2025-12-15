@@ -35,6 +35,7 @@ export function AppLayout({ children }: PropsWithChildren) {
       { to: "/letters", label: t("nav.letters") },
       { to: "/my-letters", label: t("nav.myLetters") },
       { to: "/statistics", label: t("nav.statistics") },
+      { to: "/help", label: t("nav.help") },
       { to: "/w", label: t("nav.wizard") },
       { to: "/lawyers", label: t("nav.lawyers") },
     ],
@@ -182,7 +183,7 @@ export function AppLayout({ children }: PropsWithChildren) {
                 מגדלור
               </Typography>
               <Typography sx={{ opacity: 0.9, fontSize: 13, display: { xs: "none", sm: "inline" } }}>
-                מילים שעוזרות לקבל מענה
+                {t("slogan")}
               </Typography>
             </Box>
 

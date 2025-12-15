@@ -1,0 +1,27 @@
+{
+  "name": "מגדלור - מחולל מכתבים חכם לרשויות",
+  "short_name": "מגדלור",
+  "description": "כלי פשוט וחכם ליצירת מכתבים מקצועיים לרשויות. חינמי, פרטי, ומוכח.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0F766E",
+  "theme_color": "#0F766E",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/migdal.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/migdal.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["utilities", "productivity"],
+  "lang": "he",
+  "dir": "rtl"
+}

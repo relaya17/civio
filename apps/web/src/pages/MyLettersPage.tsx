@@ -17,6 +17,7 @@ import {
   DialogContent,
   DialogActions,
 } from "@mui/material";
+import { LetterCardSkeleton } from "../components/SkeletonLoader";
 import { useNavigate } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
@@ -75,23 +76,36 @@ export function MyLettersPage() {
     setDeleteDialog(null);
   };
 
-  if (letters.length === 0) {
-    return (
-      <Container maxWidth="md" sx={{ py: 6 }}>
-        <Stack spacing={3} sx={{ textAlign: "center" }}>
-          <Typography variant="h4" sx={{ fontWeight: 900 }}>
-            המכתבים שלי
-          </Typography>
-          <Alert severity="info">
-            עדיין לא שמרת מכתבים. לאחר שתכתוב מכתב ותשמור אותו, הוא יופיע כאן.
-          </Alert>
-          <Button variant="contained" onClick={() => navigate("/letters")}>
-            כתיבת מכתב חדש
-          </Button>
-        </Stack>
-      </Container>
-    );
-  }
+              if (letters.length === 0) {
+                return (
+                  <Container maxWidth="md" sx={{ py: 6 }}>
+                    <Stack spacing={3} sx={{ textAlign: "center" }}>
+                      <Typography variant="h4" sx={{ fontWeight: 900 }}>
+                        המכתבים שלי
+                      </Typography>
+                      <Alert severity="info">
+                        עדיין לא שמרת מכתבים. לאחר שתכתוב מכתב ותשמור אותו, הוא יופיע כאן.
+                      </Alert>
+                      <Button variant="contained" onClick={() => navigate("/letters")}>
+                        כתיבת מכתב חדש
+                      </Button>
+                    </Stack>
+                  </Container>
+                );
+              }
+
+              // Show loading skeleton while letters are being loaded
+              if (letters.length === 0 && !letters) {
+                return (
+                  <Container maxWidth="md" sx={{ py: 6 }}>
+                    <Stack spacing={2}>
+                      <LetterCardSkeleton />
+                      <LetterCardSkeleton />
+                      <LetterCardSkeleton />
+                    </Stack>
+                  </Container>
+                );
+              }
 
   return (
     <Container maxWidth="md" sx={{ py: 6 }}>

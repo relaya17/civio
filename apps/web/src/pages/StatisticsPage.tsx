@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, Suspense } from "react";
 import {
   Box,
   Card,
@@ -9,6 +9,7 @@ import {
   LinearProgress,
   Chip,
 } from "@mui/material";
+import { StatCardSkeleton, PageSkeleton } from "../components/SkeletonLoader";
 import { useSavedLettersStore } from "../state/savedLettersStore";
 import type { LetterStatus } from "@repo/types";
 
@@ -76,20 +77,29 @@ export function StatisticsPage() {
     };
   }, [letters]);
 
-  if (letters.length === 0) {
-    return (
-      <Container maxWidth="md" sx={{ py: 6 }}>
-        <Stack spacing={3} sx={{ textAlign: "center" }}>
-          <Typography variant="h4" sx={{ fontWeight: 900 }}>
-            ניתוח סטטיסטי
-          </Typography>
-          <Typography variant="body1" sx={{ color: "text.secondary" }}>
-            עדיין אין מספיק נתונים לניתוח. לאחר שתשמור מכתבים, הסטטיסטיקה תופיע כאן.
-          </Typography>
-        </Stack>
-      </Container>
-    );
-  }
+              if (letters.length === 0) {
+                return (
+                  <Container maxWidth="md" sx={{ py: 6 }}>
+                    <Stack spacing={3} sx={{ textAlign: "center" }}>
+                      <Typography variant="h4" sx={{ fontWeight: 900 }}>
+                        ניתוח סטטיסטי
+                      </Typography>
+                      <Typography variant="body1" sx={{ color: "text.secondary" }}>
+                        עדיין אין מספיק נתונים לניתוח. לאחר שתשמור מכתבים, הסטטיסטיקה תופיע כאן.
+                      </Typography>
+                    </Stack>
+                  </Container>
+                );
+              }
+
+              // Show loading skeleton while calculating stats
+              if (!stats) {
+                return (
+                  <Container maxWidth="lg" sx={{ py: 6 }}>
+                    <PageSkeleton />
+                  </Container>
+                );
+              }
 
   return (
     <Container maxWidth="lg" sx={{ py: 6 }}>
@@ -99,18 +109,20 @@ export function StatisticsPage() {
         </Typography>
 
         <Stack spacing={3}>
-          {/* Overview Cards */}
-          <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "repeat(2, 1fr)", md: "repeat(4, 1fr)" }, gap: 2 }}>
-            <Card variant="outlined">
-              <CardContent>
-                <Typography variant="h3" sx={{ fontWeight: 900, color: "primary.main" }}>
-                  {stats.total}
-                </Typography>
-                <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                  מכתבים בסך הכל
-                </Typography>
-              </CardContent>
-            </Card>
+                      {/* Overview Cards */}
+                      <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "repeat(2, 1fr)", md: "repeat(4, 1fr)" }, gap: 2 }}>
+                        <Suspense fallback={<StatCardSkeleton />}>
+                          <Card variant="outlined">
+                            <CardContent>
+                              <Typography variant="h3" sx={{ fontWeight: 900, color: "primary.main" }}>
+                                {stats.total}
+                              </Typography>
+                              <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                                מכתבים בסך הכל
+                              </Typography>
+                            </CardContent>
+                          </Card>
+                        </Suspense>
 
             <Card variant="outlined">
               <CardContent>

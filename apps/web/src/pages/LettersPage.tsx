@@ -46,6 +46,8 @@ import { improveText, isAIAvailable } from "../services/aiImprovement";
 import { HelpTooltip } from "../components/HelpTooltip";
 import { EmergencyInfo } from "../components/EmergencyInfo";
 import { LetterEditor } from "../components/LetterEditor";
+import { LetterPreview } from "../components/LetterPreview";
+import { AuthorityInfoCard } from "../components/AuthorityInfoCard";
 
 const DRAFT_KEY = "civio.letters.draft.web.v1";
 
@@ -308,6 +310,7 @@ export function LettersPage() {
       secondContactDateISO: secondContactDateISO || undefined,
       noResponse: noResponse || undefined,
       useLegalTone: useLegalTone || undefined,
+      selectedLegalPhrases: selectedLegalPhrases.length > 0 ? selectedLegalPhrases : undefined,
       situation: situation || undefined,
     };
   }, [
@@ -328,6 +331,7 @@ export function LettersPage() {
     phone,
     request,
     secondContactDateISO,
+    selectedLegalPhrases,
     situation,
     subject,
     tone,
@@ -578,97 +582,101 @@ export function LettersPage() {
             ) : null}
 
             {step === 1 ? (
-              <Paper variant="outlined" sx={{ p: 2 }}>
-                <Stack spacing={2}>
-                  <Box sx={{ display: "flex", alignItems: "center" }}>
-                    <Typography sx={{ fontWeight: 800 }}>מה המצב שלך?</Typography>
-                    <HelpTooltip
-                      title="למה זה חשוב?"
-                      explanation="הבחירה במצב עוזרת לנו להתאים את הניסוח והטון של המכתב. מכתב 'אין מענה' יהיה יותר תקיף, בעוד מכתב 'פנייה ראשונית' יהיה יותר מכבד."
-                    />
-                  </Box>
-                  <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                    בחרי את המצב המתאים כדי לקבל תבנית מותאמת, או דלגי ותכתבי בעצמך.
-                  </Typography>
-                  <Stack direction="row" spacing={1} sx={{ flexWrap: "wrap" }}>
-                    <Chip
-                      label="פנייה ראשונית"
-                      onClick={() => {
-                        setSituation("first-contact");
-                        setNoResponse(false);
-                      }}
-                      clickable
-                      color={situation === "first-contact" ? "primary" : "default"}
-                      variant={situation === "first-contact" ? "filled" : "outlined"}
-                    />
-                    <Chip
-                      label="אין מענה"
-                      onClick={() => {
-                        setSituation("no-response");
-                        setNoResponse(true);
-                      }}
-                      clickable
-                      color={situation === "no-response" ? "primary" : "default"}
-                      variant={situation === "no-response" ? "filled" : "outlined"}
-                    />
-                    <Chip
-                      label="ערעור על החלטה"
-                      onClick={() => {
-                        setSituation("appeal");
-                        setKindId("appeal-objection");
-                      }}
-                      clickable
-                      color={situation === "appeal" ? "primary" : "default"}
-                      variant={situation === "appeal" ? "filled" : "outlined"}
-                    />
-                    <Chip
-                      label="התראה לפני צעדים"
-                      onClick={() => {
-                        setSituation("warning");
-                      }}
-                      clickable
-                      color={situation === "warning" ? "primary" : "default"}
-                      variant={situation === "warning" ? "filled" : "outlined"}
-                    />
-                    <Chip
-                      label="ללא תרחיש (אכתוב בעצמי)"
-                      onClick={() => {
-                        setSituation(undefined);
-                        setSubject("");
-                        setFacts("");
-                        setRequest("");
-                        next();
-                      }}
-                      clickable
-                      variant="outlined"
-                    />
+              <>
+                <Paper variant="outlined" sx={{ p: 2 }}>
+                  <Stack spacing={2}>
+                    <Box sx={{ display: "flex", alignItems: "center" }}>
+                      <Typography sx={{ fontWeight: 800 }}>מה המצב שלך?</Typography>
+                      <HelpTooltip
+                        title="למה זה חשוב?"
+                        explanation="הבחירה במצב עוזרת לנו להתאים את הניסוח והטון של המכתב. מכתב 'אין מענה' יהיה יותר תקיף, בעוד מכתב 'פנייה ראשונית' יהיה יותר מכבד."
+                      />
+                    </Box>
+                    <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                      בחרי את המצב המתאים כדי לקבל תבנית מותאמת, או דלגי ותכתבי בעצמך.
+                    </Typography>
+                    <Stack direction="row" spacing={1} sx={{ flexWrap: "wrap" }}>
+                      <Chip
+                        label="פנייה ראשונית"
+                        onClick={() => {
+                          setSituation("first-contact");
+                          setNoResponse(false);
+                        }}
+                        clickable
+                        color={situation === "first-contact" ? "primary" : "default"}
+                        variant={situation === "first-contact" ? "filled" : "outlined"}
+                      />
+                      <Chip
+                        label="אין מענה"
+                        onClick={() => {
+                          setSituation("no-response");
+                          setNoResponse(true);
+                        }}
+                        clickable
+                        color={situation === "no-response" ? "primary" : "default"}
+                        variant={situation === "no-response" ? "filled" : "outlined"}
+                      />
+                      <Chip
+                        label="ערעור על החלטה"
+                        onClick={() => {
+                          setSituation("appeal");
+                          setKindId("appeal-objection");
+                        }}
+                        clickable
+                        color={situation === "appeal" ? "primary" : "default"}
+                        variant={situation === "appeal" ? "filled" : "outlined"}
+                      />
+                      <Chip
+                        label="התראה לפני צעדים"
+                        onClick={() => {
+                          setSituation("warning");
+                        }}
+                        clickable
+                        color={situation === "warning" ? "primary" : "default"}
+                        variant={situation === "warning" ? "filled" : "outlined"}
+                      />
+                      <Chip
+                        label="ללא תרחיש (אכתוב בעצמי)"
+                        onClick={() => {
+                          setSituation(undefined);
+                          setSubject("");
+                          setFacts("");
+                          setRequest("");
+                          next();
+                        }}
+                        clickable
+                        variant="outlined"
+                      />
+                    </Stack>
+                    {presets.length > 0 ? (
+                      <>
+                        <Typography sx={{ fontWeight: 700, mt: 1 }}>תבניות מוכנות לפי המצב:</Typography>
+                        <Stack direction="row" spacing={1} sx={{ flexWrap: "wrap" }}>
+                          {presets.map((p) => (
+                            <Chip
+                              key={p.id}
+                              label={p.label}
+                              onClick={() => {
+                                setSubject(p.subject);
+                                setFacts(p.facts);
+                                setRequest(p.request);
+                                next();
+                              }}
+                              clickable
+                              color="primary"
+                              variant="outlined"
+                            />
+                          ))}
+                        </Stack>
+                      </>
+                    ) : situation ? (
+                      <Alert severity="info">אין עדיין תבנית מוכנה למצב הזה — לחצי "המשך" ותכתבי בעצמך.</Alert>
+                    ) : null}
                   </Stack>
-                  {presets.length > 0 ? (
-                    <>
-                      <Typography sx={{ fontWeight: 700, mt: 1 }}>תבניות מוכנות לפי המצב:</Typography>
-                      <Stack direction="row" spacing={1} sx={{ flexWrap: "wrap" }}>
-                        {presets.map((p) => (
-                          <Chip
-                            key={p.id}
-                            label={p.label}
-                            onClick={() => {
-                              setSubject(p.subject);
-                              setFacts(p.facts);
-                              setRequest(p.request);
-                              next();
-                            }}
-                            clickable
-                            color="primary"
-                            variant="outlined"
-                          />
-                        ))}
-                      </Stack>
-                    </>
-                  ) : situation ? (
-                    <Alert severity="info">אין עדיין תבנית מוכנה למצב הזה — לחצי "המשך" ותכתבי בעצמך.</Alert>
-                  ) : null}
-                </Stack>
-              </Paper>
+                </Paper>
+                {/* Authority Info Card - shows relevant links and tips */}
+                {authorityId ? <AuthorityInfoCard authorityId={authorityId} /> : null}
+              </>
             ) : null}
 
             {step === 2 ? (
@@ -1038,31 +1046,34 @@ export function LettersPage() {
                         </Alert>
                       ) : null}
 
-                      <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                      <Typography variant="body2" sx={{ color: "text.secondary", mb: 2 }}>
                         {letter.disclaimer}
                       </Typography>
 
-                      <Box
-                        sx={{
-                          border: "1px solid",
-                          borderColor: "divider",
-                          borderRadius: 2,
-                          p: 2,
-                          bgcolor: "background.paper",
-                          whiteSpace: "pre-wrap",
-                          fontFamily: "inherit",
-                        }}
-                      >
-                        {letter.bodyText}
-                      </Box>
+                      <LetterPreview letter={letter} fullName={fullName} editedText={editedLetterText} />
 
                       {/* Print-only block: clean layout */}
                       <Box className="civio-print-only" sx={{ display: "none" }}>
-                        <pre style={{ whiteSpace: "pre-wrap", fontFamily: "inherit", fontSize: 14, lineHeight: 1.5 }}>
-                          {letter.bodyText}
-                          {"\n\n"}
-                          {letter.disclaimer}
-                        </pre>
+                        <div style={{ whiteSpace: "pre-wrap", fontFamily: "inherit", fontSize: "12pt", lineHeight: 1.6, color: "#000" }}>
+                          <div style={{ marginBottom: "2em", textAlign: "right" }}>
+                            {new Date().toLocaleDateString("he-IL", {
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric",
+                            })}
+                          </div>
+                          <div style={{ marginBottom: "2em" }}>
+                            {editedLetterText || letter.bodyText}
+                          </div>
+                          {fullName && (
+                            <div style={{ marginTop: "3em", fontWeight: "bold" }}>
+                              {fullName}
+                            </div>
+                          )}
+                          <div style={{ marginTop: "1em", fontSize: "10pt", color: "#666" }}>
+                            {letter.disclaimer}
+                          </div>
+                        </div>
                       </Box>
                     </>
                   )}
@@ -1352,19 +1363,7 @@ export function LettersPage() {
                       {letter.disclaimer}
                     </Typography>
 
-                    <Box
-                      sx={{
-                        border: "1px solid",
-                        borderColor: "divider",
-                        borderRadius: 2,
-                        p: 2,
-                        bgcolor: "background.paper",
-                        whiteSpace: "pre-wrap",
-                        fontFamily: "inherit",
-                      }}
-                    >
-                      {letter.bodyText}
-                    </Box>
+                    <LetterPreview letter={letter} fullName={fullName} editedText={editedLetterText} />
 
                     {/* Print-only block: clean layout */}
                     <Box className="civio-print-only" sx={{ display: "none" }}>

@@ -61,7 +61,17 @@ export function generateLetter(input) {
     }
     // Add legal soft phrases if needed
     if (useLegal && tone !== "soft") {
-        bodyParts.push(random(LEGAL_SOFT_SENTENCES));
+        // Use user-selected phrases if available, otherwise random
+        if (input.selectedLegalPhrases && input.selectedLegalPhrases.length > 0) {
+            // Add all selected phrases
+            input.selectedLegalPhrases.forEach((phrase) => {
+                bodyParts.push(phrase);
+            });
+        }
+        else {
+            // Fallback to random selection
+            bodyParts.push(random(LEGAL_SOFT_SENTENCES));
+        }
         bodyParts.push("");
     }
     // Add impact phrase if no response
@@ -89,7 +99,8 @@ export function generateLetter(input) {
         bodyParts.push(`טלפון: ${input.phone}`);
     }
     const body = joinLines(bodyParts);
-    const disclaimer = "הבהרה: מכתב זה נוצר באמצעות מגדלור לצורך ניסוח פורמלי. מגדלור מספקת מידע כללי בלבד ואינה מהווה ייעוץ משפטי.";
+    // Soft warning as requested - not intimidating, reassuring
+    const disclaimer = "הערה: פנייה זו אינה מהווה ייעוץ משפטי. מגדלור מספקת כלי עזר לניסוח מכתבים בלבד. מומלץ להיוועץ באנשי מקצוע מתאימים כאשר נדרש.";
     return {
         subject: `פנייה ל-${authority.label}: ${input.subject}`,
         bodyText: `${header}${fromBlock}${body}`,
